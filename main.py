@@ -1,7 +1,9 @@
 from flask import Flask
+from flask_cors import CORS
 from db import Database
 
 app = Flask(__name__)
+CORS(app)
 db = Database()
 
 @app.route("/tours")
