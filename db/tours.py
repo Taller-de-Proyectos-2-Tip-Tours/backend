@@ -1,11 +1,10 @@
-from flask import jsonify
 import pymongo
 import sys
 from data.tours_examples import examples
 from bson.json_util import dumps
 
-class Database:
-  _db = None
+class ToursCollection:
+  _tours = None
 
   def __init__(self) -> None:
       try:
@@ -15,7 +14,8 @@ class Database:
         print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string?")
         sys.exit(1)
       # use a database named "myDatabase"
-      self.db = client.myDatabase
+      db = client.myDatabase
+      self._tours = db["tours"]
 
 
   def create_tours_collection(self, with_examples):
@@ -24,8 +24,5 @@ class Database:
       tours.insert_many(examples)
 
   def get_all_tours(self):
-    data = self.db["tours"].find()
+    data = self._tours.find()
     return dumps(data)
-  
-  def drop_tours_collection(self):
-    self.db["tours"].drop() 
