@@ -1,10 +1,9 @@
 import pymongo
 import sys
-from data.tours_examples import examples
 from bson.json_util import dumps
 
-class ToursCollection:
-  _tours = None
+class CitiesCollection:
+  _cities = None
 
   def __init__(self) -> None:
       try:
@@ -15,8 +14,11 @@ class ToursCollection:
         sys.exit(1)
       # use a database named "myDatabase"
       db = client.myDatabase
-      self._tours = db["tours"]
+      self._cities = db["cities"]
 
-  def get_all_tours(self):
-    data = self._tours.find()
+  def get_all_cities(self):
+    data = list(self._cities.find())
     return dumps(data)
+  
+  def get_city(self, name):
+    return self._cities.find_one({"name": name})
