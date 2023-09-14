@@ -40,8 +40,7 @@ def post_tours():
     except ValidationError as err:
         # Return a nice message if validation fails
         return jsonify(err.messages), 400
-    data_now_json_str = json.dumps(result)
-
     # Send data back as JSON
+    tours_collection.insert_tour(tour)
+    data_now_json_str = json.dumps(result)
     return json.loads(data_now_json_str), 201
-    #return tours_collection.insert_one()

@@ -20,3 +20,5 @@ class ToursCollection:
   def get_all_tours(self):
     data = self._tours.find()
     return dumps(data)
+  def insert_tour(self, tour):
+    self._tours.insert_one(tour)
