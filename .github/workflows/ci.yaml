@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
 
-job:
+jobs:
   run-tests:
     strategy:
       fail-fast: false
