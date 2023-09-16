@@ -3,3 +3,4 @@ dnspython>=2.4.2
 flask>=2.3.0
 flask-cors>=2.0.0
 marshmallow>=3.20.1
+pytest>=7.4.2
