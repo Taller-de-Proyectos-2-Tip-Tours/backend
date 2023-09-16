@@ -1,23 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
-from db import Database
+from api.tours import tours
+from api.cities import cities
 
 app = Flask(__name__)
-CORS(app)
-db = Database()
+app.register_blueprint(tours)
+app.register_blueprint(cities)
 
-@app.route("/tours")
-def get_tours():
-    return db.get_all_tours()
+CORS(app)
 
 # main driver function
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--dropdb', help='send if you want the db to be droped', action='store_true')
-    args = parser.parse_args()
-    if args.dropdb != None:
-        db.drop_tours_collection()
-        db.create_tours_collection(True)
     app.run(host='0.0.0.0')
