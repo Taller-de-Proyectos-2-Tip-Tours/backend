@@ -1,7 +1,7 @@
 import pymongo
 import sys
-from data.tours_examples import examples
 from bson.json_util import dumps
+import os
 
 class ToursCollection:
   _tours = None
@@ -14,11 +14,18 @@ class ToursCollection:
         print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string?")
         sys.exit(1)
       # use a database named "myDatabase"
-      db = client.myDatabase
+      if os.environ["TESTING"] == "True":
+        db = client.mockDatabase
+      else:
+        db = client.myDatabase
       self._tours = db["tours"]
 
   def get_all_tours(self):
     data = self._tours.find()
     return dumps(data)
+  
   def insert_tour(self, tour):
     self._tours.insert_one(tour)
+
+  def remove_tour(self, id):
+    self._tours.delete_one({"name": id})
