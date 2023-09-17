@@ -1,3 +1,7 @@
+import os
+
+os.environ["TESTING"] = "False"
+
 from flask import Flask
 from flask_cors import CORS
 from api.tours import tours
