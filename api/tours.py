@@ -1,7 +1,6 @@
-from flask import Blueprint
 from db.tours import ToursCollection
 from db.cities import CitiesCollection
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 import json
 from marshmallow import Schema, fields, ValidationError, validates_schema
 import time
@@ -82,7 +81,7 @@ class ToursSchema(Schema):
 
 @tours.route("/tours", methods=['GET'])
 def get_tours():
-    return json.loads(tours_collection.get_all_tours()), 200
+    return json.loads(tours_collection.get_all_tours(request.args.get('name'), request.args.get('city'))), 200
 
 @tours.route("/tours", methods=['POST'])
 def post_tours():
