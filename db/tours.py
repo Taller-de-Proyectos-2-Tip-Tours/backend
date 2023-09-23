@@ -20,7 +20,7 @@ class ToursCollection:
         db = client.myDatabase
       self._tours = db["tours"]
 
-  def get_all_tours(self, name, city):
+  def get_all_tours(self, name = None, city = None):
     if city and name:
       data = self._tours.find({"name" : {"$regex" : name}, "city": city})
     elif city:

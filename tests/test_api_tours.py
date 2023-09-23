@@ -19,7 +19,9 @@ def test_complete_tour():
         "meetingPoint": "Obelisco",
         "dates": ["2023-07-09T14:00"],
         "mainImage": "mockImage",
-        "otherImages": ["mockImage2", "mockImage3", "mockImage4"]
+        "otherImages": ["mockImage2", "mockImage3", "mockImage4"],
+        "lat": "1.2",
+        "lon": "1.4"
     }
     schema = ToursSchema()
     try:
