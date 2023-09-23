@@ -8,12 +8,20 @@ from marshmallow import ValidationError
 
 def test_complete_tour():
     request = {
-        "name": "Nuevo paseo creado con api",
-        "duration": "10 hours",
+        "name": "Nuevo paseo creado en api deployada",
+        "duration": "23:30",
         "description": "alto paseo",
-        "minParticipants": 5,
-        "maxParticipants": 5,
-        "city": "Buenos Aires"
+        "minParticipants": 8,
+        "maxParticipants": 10,
+        "city": "Córdoba",
+        "considerations": "Hay que caminar mucho",
+        "lenguage": "Español",
+        "meetingPoint": "Obelisco",
+        "dates": ["2023-07-09T14:00"],
+        "mainImage": "mockImage",
+        "otherImages": ["mockImage2", "mockImage3", "mockImage4"],
+        "lat": "1.2",
+        "lon": "1.4"
     }
     schema = ToursSchema()
     try:
