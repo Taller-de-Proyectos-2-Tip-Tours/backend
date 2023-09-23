@@ -25,6 +25,8 @@ class ToursSchema(Schema):
     dates = fields.List(fields.String(), required=True)
     mainImage = fields.String(required=True)
     otherImages = fields.List(fields.String(), required=True)
+    lat = fields.String(required=True)
+    lon = fields.String(required=True)
 
     @validates_schema
     def validate_name(self, data, **kwargs):
