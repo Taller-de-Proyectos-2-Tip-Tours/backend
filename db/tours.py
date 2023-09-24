@@ -36,3 +36,9 @@ class ToursCollection:
 
   def remove_tour(self, id):
     self._tours.delete_one({"name": id})
+
+  def insert_many(self, tours):
+    self._tours.insert_many(tours)
+
+  def drop_collection(self):
+    self._tours.drop()
