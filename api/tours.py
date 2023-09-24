@@ -78,7 +78,7 @@ class ToursSchema(Schema):
     @validates_schema
     def validate_other_images(self, data, **kwargs):
        length = len(data["otherImages"])
-       if length < 2 or length > 4:
+       if length < 1 or length > 4:
           raise ValidationError("El paseo debe contener entre 2 y 4 imagenes extras")
 
 @tours.route("/tours", methods=['GET'])
