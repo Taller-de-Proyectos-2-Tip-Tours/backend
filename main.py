@@ -43,5 +43,5 @@ if args.drop_tours:
 
 
 # main driver function
-#if __name__ == "__main__":
- #   app.run(host='0.0.0.0')
+if __name__ == "__main__" and (not args.example_tours) and (not args.drop_tours):
+   app.run(host='0.0.0.0')
