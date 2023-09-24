@@ -21,16 +21,6 @@ parser.add_argument('--example_tours', action='store_true', help='set if you wan
 
 args = parser.parse_args()
 
-if args.example_tours:
-    print("Generating examples.....")
-    from tests.examples_generator import ToursExampleGenerator
-    generator = ToursExampleGenerator()
-    try:
-        generator.generate_examples()
-    except:
-        print("Something went wrong")
-    print("Done")
-
 if args.drop_tours:
     print("Droping DB.....")
     from tests.examples_generator import ToursExampleGenerator
@@ -41,6 +31,15 @@ if args.drop_tours:
         print("Something went wrong")
     print("Done")
 
+if args.example_tours:
+    print("Generating examples.....")
+    from tests.examples_generator import ToursExampleGenerator
+    generator = ToursExampleGenerator()
+    try:
+        generator.generate_examples()
+    except:
+        print("Something went wrong")
+    print("Done")
 
 # main driver function
 if __name__ == "__main__" and (not args.example_tours) and (not args.drop_tours):
