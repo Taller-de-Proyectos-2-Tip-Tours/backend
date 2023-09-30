@@ -2,7 +2,7 @@ import os
 
 os.environ["TESTING"] = "True"
 
-from api.tours import ToursSchema
+from api.tours_api import ToursSchema
 import pytest
 from marshmallow import ValidationError
 
