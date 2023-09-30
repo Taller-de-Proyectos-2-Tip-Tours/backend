@@ -5,12 +5,14 @@ os.environ["TESTING"] = "False"
 
 from flask import Flask
 from flask_cors import CORS
-from api.tours import tours
-from api.cities import cities
+from api.tours_api import tours
+from api.cities_api import cities
+from api.reserves_api import reserves
 
 app = Flask(__name__)
 app.register_blueprint(tours)
 app.register_blueprint(cities)
+app.register_blueprint(reserves)
 
 CORS(app)
 

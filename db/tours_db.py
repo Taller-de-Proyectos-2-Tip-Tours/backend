@@ -1,6 +1,7 @@
 import pymongo
 import sys
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 import os
 
 class ToursCollection:
@@ -42,3 +43,7 @@ class ToursCollection:
 
   def drop_collection(self):
     self._tours.drop()
+
+  def get_tour_by_id(self, tourId):
+    data = self._tours.find({"_id" : ObjectId(tourId)}, {"maxParticipants": 1})
+    return dumps(data)

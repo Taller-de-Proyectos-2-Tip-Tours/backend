@@ -1,5 +1,5 @@
-from db.tours import ToursCollection
-from db.cities import CitiesCollection
+from db.tours_db import ToursCollection
+from db.cities_db import CitiesCollection
 from flask import request, jsonify, Blueprint
 import json
 from marshmallow import Schema, fields, ValidationError, validates_schema

@@ -1,6 +1,6 @@
 from flask import Blueprint
 import json
-from db.cities import CitiesCollection
+from db.cities_db import CitiesCollection
 
 cities = Blueprint('cities',__name__)
 cities_collection = CitiesCollection()
