@@ -50,6 +50,11 @@ def post_tours():
   data_now_json_str = json.dumps(result)
   return json.loads(data_now_json_str), 201
 
-@reserves.route("/reserves/<tourId>", methods=['GET'])
-def get_reserves(tourId):
-  return json.loads(reserves_collection.get_reserves_for_tour(tourId)), 200
+@reserves.route("/reserves", methods=['GET'])
+def get_reserves():
+  if not (request.args.get('tourId') is None):
+    return json.loads(reserves_collection.get_reserves_for_tour(request.args.get('tourId'))), 200
+  elif not (request.args.get('travelerEmail') is None):
+    return json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail'))), 200
+  return {"error": "Debe enviar un tourId o travelerEmail para visualizar los tours"}, 400
+  
