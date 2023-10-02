@@ -64,5 +64,8 @@ class ToursCollection:
     self._tours.drop()
 
   def get_tour_by_id(self, tourId):
-    data = self._tours.find({"_id" : ObjectId(tourId)}, {"maxParticipants": 1})
+    data = self._tours.find({"_id" : ObjectId(tourId)}, {"maxParticipants": 1, "dates": 1})
     return dumps(data)
+  
+  def update_tour_dates(self, dates, tourId):
+    data = self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})

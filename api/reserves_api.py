@@ -45,7 +45,19 @@ def post_tours():
   except ValidationError as err:
       return jsonify(err.messages), 400
   # Send data back as JSON
+  tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId']))
+  new_dates = []
+  for date in tour[0]["dates"]:
+    if date["date"] == result["date"]:
+      if date["people"] + result["people"] > tour[0]["maxParticipants"]:
+        return {"error": "La cantidad de personas de la reserva supera la capacidad del tour"}, 400
+      else:
+        date["people"] += result["people"]
+      if date["people"] == tour[0]["maxParticipants"]:
+        date["state"] = "cerrado"
+    new_dates.append(date)
   reserves_collection.insert_reserve(reserve)
+  tours_collection.update_tour_dates(new_dates, result["tourId"])
   data_now_json_str = json.dumps(result)
   return json.loads(data_now_json_str), 201
 
