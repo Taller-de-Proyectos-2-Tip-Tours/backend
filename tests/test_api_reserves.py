@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 
 def test_complete_reserve():
     request = {
-        "tourId": "65035bf573ae9429e602edf1",
+        "tourId": "651b1609031d7156530b2206",
         "dateId": "1234",
         "traveler": {
             "name": "Diego",

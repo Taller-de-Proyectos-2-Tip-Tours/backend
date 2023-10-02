@@ -22,14 +22,38 @@ class ToursCollection:
       self._tours = db["tours"]
 
   def get_all_tours(self, name = None, city = None, guideEmail = None, dateState = None):
-    query = {}
+    pipeline = []
+
+    # Match stage to filter tours based on other criteria
+    match_stage = {}
     if name:
-      query["name"] = {"$regex": name}
+        match_stage["name"] = {"$regex": name}
     if city:
-      query["city"] = city
+        match_stage["city"] = city
     if guideEmail:
-      query["guide.email"] = guideEmail
-    data = self._tours.find(query)
+        match_stage["guide.email"] = guideEmail
+    pipeline.append({"$match": match_stage})
+
+    # Unwind the "dates" array to work with individual dates
+    pipeline.append({"$unwind": "$dates"})
+
+    # Match stage to filter dates with the specified state
+    if dateState:
+        date_match_stage = {"dates.state": dateState}
+        pipeline.append({"$match": date_match_stage})
+
+    # Group the results by tour ID and reconstruct the "dates" array
+    group_stage = {
+        "_id": "$_id",
+        "name": {"$first": "$name"},
+        "city": {"$first": "$city"},
+        "guide": {"$first": "$guide"},
+        "dates": {"$push": "$dates"}
+    }
+    pipeline.append({"$group": group_stage})
+
+    data = self._tours.aggregate(pipeline)
+
     return dumps(data)
   
   def insert_tour(self, tour):

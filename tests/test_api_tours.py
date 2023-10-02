@@ -21,7 +21,11 @@ def test_complete_tour():
         "mainImage": "mockImage",
         "otherImages": ["mockImage2", "mockImage3", "mockImage4"],
         "lat": 1.2,
-        "lon": 1.4
+        "lon": 1.4,
+        "guide": {
+            "name": "Juan Perez",
+            "email": "mail@mail.com"
+        }
     }
     schema = ToursSchema()
     try:
