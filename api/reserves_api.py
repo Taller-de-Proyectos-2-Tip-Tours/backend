@@ -15,7 +15,7 @@ class TravelerSchema(Schema):
 
 class ReservesSchema(Schema):
   tourId = fields.String(required=True)
-  dateId = fields.String(required=True)
+  date = fields.String(required=True)
   traveler = fields.Nested(TravelerSchema, required=True)
   people = fields.Integer(required=True)
 
@@ -33,9 +33,8 @@ class ReservesSchema(Schema):
     tour = json.loads(tours_collection.get_tour_by_id(data['tourId']))
     if len(tour) == 0:
       raise ValidationError("El tour seleccionado no existe.")
-    if int(tour[0]['maxParticipants'] * 0.5) <= data['people']:
+    if int(tour[0]['maxParticipants'] * 0.5) < data['people']:
       raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour[0]['maxParticipants'] * 0.5) - 1))
- 
 
 @reserves.route("/reserves", methods=['POST'])
 def post_tours():
@@ -46,10 +45,27 @@ def post_tours():
   except ValidationError as err:
       return jsonify(err.messages), 400
   # Send data back as JSON
-  reserves_collection.insert_reserve(reserve)
+  tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId']))
+  new_dates = []
+  for date in tour[0]["dates"]:
+    if date["date"] == result["date"]:
+      if date["people"] + result["people"] > tour[0]["maxParticipants"]:
+        return {"error": "La cantidad de personas de la reserva supera la capacidad del tour"}, 400
+      else:
+        date["people"] += result["people"]
+      if date["people"] == tour[0]["maxParticipants"]:
+        date["state"] = "cerrado"
+    new_dates.append(date)
+  reserve = reserves_collection.insert_reserve(reserve)
+  tours_collection.update_tour_dates(new_dates, result["tourId"])
   data_now_json_str = json.dumps(result)
-  return json.loads(data_now_json_str), 201
+  return json.loads(reserve), 201
 
-@reserves.route("/reserves/<tourId>", methods=['GET'])
-def get_reserves(tourId):
-  return json.loads(reserves_collection.get_reserves_for_tour(tourId)), 200
+@reserves.route("/reserves", methods=['GET'])
+def get_reserves():
+  if not (request.args.get('tourId') is None):
+    return json.loads(reserves_collection.get_reserves_for_tour(request.args.get('tourId'))), 200
+  elif not (request.args.get('travelerEmail') is None):
+    return json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail'))), 200
+  return {"error": "Debe enviar un tourId o travelerEmail para visualizar los tours"}, 400
+  

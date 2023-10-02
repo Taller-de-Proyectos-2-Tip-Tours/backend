@@ -21,15 +21,34 @@ class ToursCollection:
         db = client.myDatabase
       self._tours = db["tours"]
 
-  def get_all_tours(self, name = None, city = None):
-    if city and name:
-      data = self._tours.find({"name" : {"$regex" : name}, "city": city})
-    elif city:
-      data = self._tours.find({"city": city})
-    elif name:
-      data = self._tours.find({"name" : {"$regex" : name}})
-    else:
-      data = self._tours.find({})
+  def get_all_tours(self, name = None, city = None, guideEmail = None, dateState = None):
+    pipeline = []
+
+    # Match stage to filter tours based on other criteria
+    match_stage = {}
+    if name:
+        match_stage["name"] = {"$regex": name}
+    if city:
+        match_stage["city"] = city
+    if guideEmail:
+        match_stage["guide.email"] = guideEmail
+    pipeline.append({"$match": match_stage})
+
+    # Match stage to filter dates with the specified state
+    if dateState:
+        pipeline.append({
+            "$addFields": {
+                "dates": {
+                    "$filter": {
+                        "input": "$dates",
+                        "as": "item",
+                        "cond": {"$eq": ["$$item.state", dateState]}
+                    }
+                }
+            }
+        })
+
+    data = self._tours.aggregate(pipeline)
     return dumps(data)
   
   def insert_tour(self, tour):
@@ -45,5 +64,8 @@ class ToursCollection:
     self._tours.drop()
 
   def get_tour_by_id(self, tourId):
-    data = self._tours.find({"_id" : ObjectId(tourId)}, {"maxParticipants": 1})
+    data = self._tours.find({"_id" : ObjectId(tourId)}, {"maxParticipants": 1, "dates": 1})
     return dumps(data)
+  
+  def update_tour_dates(self, dates, tourId):
+    data = self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})
