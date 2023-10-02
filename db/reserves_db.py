@@ -1,6 +1,7 @@
 import pymongo
 import sys
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 import os
 
 class ReservesCollection:
@@ -21,7 +22,8 @@ class ReservesCollection:
       self._reserves = db["reserves"]
 
   def insert_reserve(self, reserve):
-    self._reserves.insert_one(reserve)
+    data = self._reserves.insert_one(reserve)
+    return dumps(data.inserted_id)
 
   def get_reserves_for_tour(self, tourId):
     data = self._reserves.find({"tourId": tourId})
@@ -30,3 +32,6 @@ class ReservesCollection:
   def get_reserves_for_traveler(self, email):
     data = self._reserves.find({"traveler.email": email})
     return dumps(data)
+  
+  def remove_reserve(self, id):
+    self._reserves.delete_one({"_id" : ObjectId(id)})

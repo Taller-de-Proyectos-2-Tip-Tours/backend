@@ -33,7 +33,7 @@ class ReservesSchema(Schema):
     tour = json.loads(tours_collection.get_tour_by_id(data['tourId']))
     if len(tour) == 0:
       raise ValidationError("El tour seleccionado no existe.")
-    if int(tour[0]['maxParticipants'] * 0.5) <= data['people']:
+    if int(tour[0]['maxParticipants'] * 0.5) < data['people']:
       raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour[0]['maxParticipants'] * 0.5) - 1))
 
 @reserves.route("/reserves", methods=['POST'])
@@ -56,10 +56,10 @@ def post_tours():
       if date["people"] == tour[0]["maxParticipants"]:
         date["state"] = "cerrado"
     new_dates.append(date)
-  reserves_collection.insert_reserve(reserve)
+  reserve = reserves_collection.insert_reserve(reserve)
   tours_collection.update_tour_dates(new_dates, result["tourId"])
   data_now_json_str = json.dumps(result)
-  return json.loads(data_now_json_str), 201
+  return json.loads(reserve), 201
 
 @reserves.route("/reserves", methods=['GET'])
 def get_reserves():
