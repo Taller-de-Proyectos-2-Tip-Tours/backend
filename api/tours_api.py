@@ -12,7 +12,12 @@ cities_collection = CitiesCollection()
 
 lenguages = ["Español", "Inglés", "Portugués", "Alemán", "Francés", "Italiano"]
 
+class GuideSchema(Schema):
+  name = fields.String(required=True)
+  email = fields.String(required=True)
+
 class ToursSchema(Schema):
+    guide = fields.Nested(GuideSchema, required=True)
     name = fields.String(required=True)
     duration = fields.String(required=True)
     description = fields.String(required=True)
@@ -83,7 +88,10 @@ class ToursSchema(Schema):
 
 @tours.route("/tours", methods=['GET'])
 def get_tours():
-    return json.loads(tours_collection.get_all_tours(request.args.get('name'), request.args.get('city'))), 200
+    return json.loads(tours_collection.get_all_tours(request.args.get('name'), 
+                                                     request.args.get('city'),
+                                                     request.args.get('guideEmail'),
+                                                     request.args.get('dateState'))), 200
 
 @tours.route("/tours", methods=['POST'])
 def post_tours():
@@ -95,6 +103,9 @@ def post_tours():
         # Return a nice message if validation fails
         return jsonify(err.messages), 400
     # Send data back as JSON
+    aux = []
+    for date in tour["dates"]:
+       aux.append({"date": date, "state": "abierto", "people": 0})
+    tour["dates"] = aux
     tours_collection.insert_tour(tour)
-    data_now_json_str = json.dumps(result)
-    return json.loads(data_now_json_str), 201
+    return {"success": "El paseo fue creado con éxito."}, 201

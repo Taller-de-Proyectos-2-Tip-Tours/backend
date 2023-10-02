@@ -21,15 +21,15 @@ class ToursCollection:
         db = client.myDatabase
       self._tours = db["tours"]
 
-  def get_all_tours(self, name = None, city = None):
-    if city and name:
-      data = self._tours.find({"name" : {"$regex" : name}, "city": city})
-    elif city:
-      data = self._tours.find({"city": city})
-    elif name:
-      data = self._tours.find({"name" : {"$regex" : name}})
-    else:
-      data = self._tours.find({})
+  def get_all_tours(self, name = None, city = None, guideEmail = None, dateState = None):
+    query = {}
+    if name:
+      query["name"] = {"$regex": name}
+    if city:
+      query["city"] = city
+    if guideEmail:
+      query["guide.email"] = guideEmail
+    data = self._tours.find(query)
     return dumps(data)
   
   def insert_tour(self, tour):

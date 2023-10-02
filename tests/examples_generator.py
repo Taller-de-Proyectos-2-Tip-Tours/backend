@@ -1,4 +1,4 @@
-from tours_db import ToursCollection
+from db.tours_db import ToursCollection
 from db.tours_examples import examples
 
 class ToursExampleGenerator:
