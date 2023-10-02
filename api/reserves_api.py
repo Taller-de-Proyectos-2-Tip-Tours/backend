@@ -15,7 +15,7 @@ class TravelerSchema(Schema):
 
 class ReservesSchema(Schema):
   tourId = fields.String(required=True)
-  dateId = fields.String(required=True)
+  date = fields.String(required=True)
   traveler = fields.Nested(TravelerSchema, required=True)
   people = fields.Integer(required=True)
 
@@ -35,7 +35,6 @@ class ReservesSchema(Schema):
       raise ValidationError("El tour seleccionado no existe.")
     if int(tour[0]['maxParticipants'] * 0.5) <= data['people']:
       raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour[0]['maxParticipants'] * 0.5) - 1))
- 
 
 @reserves.route("/reserves", methods=['POST'])
 def post_tours():

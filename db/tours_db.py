@@ -34,26 +34,21 @@ class ToursCollection:
         match_stage["guide.email"] = guideEmail
     pipeline.append({"$match": match_stage})
 
-    # Unwind the "dates" array to work with individual dates
-    pipeline.append({"$unwind": "$dates"})
-
     # Match stage to filter dates with the specified state
     if dateState:
-        date_match_stage = {"dates.state": dateState}
-        pipeline.append({"$match": date_match_stage})
-
-    # Group the results by tour ID and reconstruct the "dates" array
-    group_stage = {
-        "_id": "$_id",
-        "name": {"$first": "$name"},
-        "city": {"$first": "$city"},
-        "guide": {"$first": "$guide"},
-        "dates": {"$push": "$dates"}
-    }
-    pipeline.append({"$group": group_stage})
+        pipeline.append({
+            "$addFields": {
+                "dates": {
+                    "$filter": {
+                        "input": "$dates",
+                        "as": "item",
+                        "cond": {"$eq": ["$$item.state", dateState]}
+                    }
+                }
+            }
+        })
 
     data = self._tours.aggregate(pipeline)
-
     return dumps(data)
   
   def insert_tour(self, tour):
