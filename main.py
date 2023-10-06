@@ -29,6 +29,7 @@ if args.drop_tours:
     generator = ToursExampleGenerator()
     try:
         generator.drop_tours()
+        generator.drop_reserves()
     except:
         print("Something went wrong")
     print("Done")

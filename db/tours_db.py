@@ -69,12 +69,11 @@ class ToursCollection:
     return dumps(data)
   
   def update_tour_dates(self, dates, tourId):
-    data = self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})
+    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})
 
   def cancel_tour(self, tourId, date):
     data = self._tours.find({"_id" : ObjectId(tourId)}, {"dates": 1})
     tour = json.loads(dumps(data))
-    print(tour)
     if (tour is None) or len(tour) == 0:
       raise Exception("El tour no existe.")
     new_dates = []
@@ -88,3 +87,24 @@ class ToursCollection:
       else:
         new_dates.append(tour_date)
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
+
+  def pepito(self, tourId, date, people):
+    data = self._tours.find({"_id" : ObjectId(tourId)}, {"dates": 1})
+    tour = json.loads(dumps(data))
+    if (tour is None) or len(tour) == 0:
+      raise Exception("El tour no existe.")
+    new_dates = []
+    for tour_date in tour[0]["dates"]:
+      if date == tour_date["date"]:
+        new_sate = tour_date["state"]
+        if new_sate == "cerrado":
+          new_sate = "abierto"
+        new_dates.append({
+          "date": tour_date["date"],
+          "state": new_sate,
+          "people": tour_date["people"] - people
+        })
+      else:
+        new_dates.append(tour_date)
+    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}}) 
+    

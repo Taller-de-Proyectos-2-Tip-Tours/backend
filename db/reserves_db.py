@@ -33,5 +33,14 @@ class ReservesCollection:
     data = self._reserves.find({"traveler.email": email})
     return dumps(data)
   
-  def remove_reserve(self, id):
-    self._reserves.delete_one({"_id" : ObjectId(id)})
+  def get_reserve_by_id(self, reserveId):
+    data = self._reserves.find_one({"_id" : ObjectId(reserveId)})
+    return dumps(data)
+  
+  def delete_reserve(self, reserveId):
+    self._reserves.delete_one({"_id" : ObjectId(reserveId)})
+
+  def drop_collection(self):
+    self._reserves.drop()
+
+  

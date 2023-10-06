@@ -4,6 +4,7 @@ from marshmallow import Schema, fields, ValidationError, validates_schema
 from db.tours_db import ToursCollection
 from bson.objectid import ObjectId
 from db.reserves_db import ReservesCollection
+from datetime import datetime, timedelta
 
 reserves = Blueprint('reserves',__name__)
 tours_collection = ToursCollection()
@@ -58,7 +59,6 @@ def post_tours():
     new_dates.append(date)
   reserve = reserves_collection.insert_reserve(reserve)
   tours_collection.update_tour_dates(new_dates, result["tourId"])
-  data_now_json_str = json.dumps(result)
   return json.loads(reserve), 201
 
 @reserves.route("/reserves", methods=['GET'])
@@ -68,4 +68,25 @@ def get_reserves():
   elif not (request.args.get('travelerEmail') is None):
     return json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail'))), 200
   return {"error": "Debe enviar un tourId o travelerEmail para visualizar los tours"}, 400
+
+@reserves.route("/reserves/<reserveId>", methods=['DELETE'])
+def cancel_reserve(reserveId):
+  try:
+    reserve = json.loads(reserves_collection.get_reserve_by_id(reserveId))
+    print(reserve)
+    if reserve is None:
+      return {
+          "error": "La reserva no existe." 
+        }, 400
+    time_difference = datetime.strptime(reserve["date"], "%Y-%m-%dT%H:%M:%S") - datetime.now()
+    if abs(time_difference) < timedelta(hours=24):
+        return {
+          "error": "No puede cancelar una reserva a menos de 24 horas de la misma." 
+        }, 400
+    reserves_collection.delete_reserve(reserveId)
+    print("Reserve deleted")
+    tours_collection.pepito(reserve["tourId"], reserve["date"], reserve["people"])
+  except Exception as err:
+    return {"error": str(err)}, 400
+  return {"success": "La reserva fue cancelada correctamente"}, 200
   
