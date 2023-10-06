@@ -4,7 +4,7 @@ from flask import request, jsonify, Blueprint
 import json
 from marshmallow import Schema, fields, ValidationError, validates_schema
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 tours = Blueprint('tours',__name__)
 tours_collection = ToursCollection()
@@ -109,3 +109,26 @@ def post_tours():
     tour["dates"] = aux
     tours_collection.insert_tour(tour)
     return {"success": "El paseo fue creado con éxito."}, 201
+
+@tours.route("/tours/cancel", methods=['PUT'])
+def cancel_tours():
+    tourId = request.args.get('tourId')
+    date = request.args.get('date')
+    if (tourId is None) or (date is None):
+       return {
+          "error": "Debe enviar un tourId y date para cancelar." 
+       }, 400
+    time_difference = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S") - datetime.now()
+    if abs(time_difference) < timedelta(hours=24):
+       return {
+          "error": "No puede cancelar un paseo a menos de 24 horas del mismo." 
+       }, 400
+    try:
+      tours_collection.cancel_tour(tourId, date)
+    except Exception as err:
+      return {"error": str(err)}, 400
+    return {
+      "success": "La fecha fue cancelada con éxito.",
+      "tourId": tourId,
+      "date": date
+    }, 201

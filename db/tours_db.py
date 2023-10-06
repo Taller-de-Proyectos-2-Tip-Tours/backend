@@ -3,6 +3,7 @@ import sys
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 import os
+import json
 
 class ToursCollection:
   _tours = None
@@ -69,3 +70,21 @@ class ToursCollection:
   
   def update_tour_dates(self, dates, tourId):
     data = self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})
+
+  def cancel_tour(self, tourId, date):
+    data = self._tours.find({"_id" : ObjectId(tourId)}, {"dates": 1})
+    tour = json.loads(dumps(data))
+    print(tour)
+    if (tour is None) or len(tour) == 0:
+      raise Exception("El tour no existe.")
+    new_dates = []
+    for tour_date in tour[0]["dates"]:
+      if date == tour_date["date"]:
+        new_dates.append({
+          "date": tour_date["date"],
+          "state": "cancelado",
+          "people": tour_date["people"]
+        })
+      else:
+        new_dates.append(tour_date)
+    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
