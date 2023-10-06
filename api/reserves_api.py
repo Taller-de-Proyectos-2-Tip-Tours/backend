@@ -84,8 +84,7 @@ def cancel_reserve(reserveId):
           "error": "No puede cancelar una reserva a menos de 24 horas de la misma." 
         }, 400
     reserves_collection.delete_reserve(reserveId)
-    print("Reserve deleted")
-    tours_collection.pepito(reserve["tourId"], reserve["date"], reserve["people"])
+    tours_collection.cancel_reserve_for_tour(reserve["tourId"], reserve["date"], reserve["people"])
   except Exception as err:
     return {"error": str(err)}, 400
   return {"success": "La reserva fue cancelada correctamente"}, 200

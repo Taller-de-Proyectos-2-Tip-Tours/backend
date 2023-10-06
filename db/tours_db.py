@@ -88,7 +88,7 @@ class ToursCollection:
         new_dates.append(tour_date)
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
 
-  def pepito(self, tourId, date, people):
+  def cancel_reserve_for_tour(self, tourId, date, people):
     data = self._tours.find({"_id" : ObjectId(tourId)}, {"dates": 1})
     tour = json.loads(dumps(data))
     if (tour is None) or len(tour) == 0:
