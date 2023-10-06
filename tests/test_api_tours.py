@@ -1,8 +1,8 @@
 import os
-
+from flask import Flask
 os.environ["TESTING"] = "True"
 
-from api.tours_api import ToursSchema
+from api.tours_api import ToursSchema, tours
 import pytest
 from marshmallow import ValidationError
 
@@ -32,3 +32,14 @@ def test_complete_tour():
         schema.load(request)
     except ValidationError as err:
         pytest.fail(err)
+
+@pytest.fixture
+def app():
+    app = Flask(__name__)
+    app.register_blueprint(tours)
+    return app
+
+def test_cancel_tour(app):
+    client = app.test_client()
+    response = client.put('/tours/cancel?tourId=651b1609031d7156530b2206&date=2024-10-15T10:30:00')
+    assert response.status_code == 201
