@@ -16,6 +16,11 @@ class GuideSchema(Schema):
   name = fields.String(required=True)
   email = fields.String(required=True)
 
+class StopSchema(Schema):
+  lat = fields.Float(required=True)
+  lon = fields.Float(required=True)
+  tag = fields.String()
+
 class ToursSchema(Schema):
     guide = fields.Nested(GuideSchema, required=True)
     name = fields.String(required=True)
@@ -30,8 +35,7 @@ class ToursSchema(Schema):
     dates = fields.List(fields.String(), required=True)
     mainImage = fields.String(required=True)
     otherImages = fields.List(fields.String(), required=True)
-    lat = fields.Float(required=True)
-    lon = fields.Float(required=True)
+    stops = fields.List(fields.Nested(StopSchema), required=True)
 
     @validates_schema
     def validate_name(self, data, **kwargs):
