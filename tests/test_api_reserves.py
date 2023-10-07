@@ -42,6 +42,6 @@ def test_reserve_using_api(app):
     response = client.post('/reserves', json=request)
     assert response.status_code == 201
     response_data = response.get_json()
-    response = client.delete('/reserves/' + response_data["$oid"])
+    response = client.delete('/reserves/' + response_data["id"])
     assert response.status_code == 200
     

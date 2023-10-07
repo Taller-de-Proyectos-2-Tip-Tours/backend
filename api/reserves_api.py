@@ -31,11 +31,11 @@ class ReservesSchema(Schema):
         ObjectId(data['tourId'])
     except:
       raise ValidationError("El tour seleccionado no existe.")
-    tour = json.loads(tours_collection.get_tour_by_id(data['tourId']))
-    if len(tour) == 0:
+    tour = json.loads(tours_collection.get_tour_by_id(data['tourId'], {'maxParticipants': 1}))
+    if tour is None:
       raise ValidationError("El tour seleccionado no existe.")
-    if int(tour[0]['maxParticipants'] * 0.5) < data['people']:
-      raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour[0]['maxParticipants'] * 0.5) - 1))
+    if int(tour['maxParticipants'] * 0.5) < data['people']:
+      raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour['maxParticipants'] * 0.5)))
 
 @reserves.route("/reserves", methods=['POST'])
 def post_tours():
@@ -46,20 +46,21 @@ def post_tours():
   except ValidationError as err:
       return jsonify(err.messages), 400
   # Send data back as JSON
-  tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId']))
+  tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'maxParticipants': 1, 'dates': 1}))
   new_dates = []
-  for date in tour[0]["dates"]:
+  for date in tour["dates"]:
     if date["date"] == result["date"]:
-      if date["people"] + result["people"] > tour[0]["maxParticipants"]:
+      if date["people"] + result["people"] > tour["maxParticipants"]:
         return {"error": "La cantidad de personas de la reserva supera la capacidad del tour"}, 400
       else:
         date["people"] += result["people"]
-      if date["people"] == tour[0]["maxParticipants"]:
+      if date["people"] == tour["maxParticipants"]:
         date["state"] = "cerrado"
     new_dates.append(date)
-  reserve = reserves_collection.insert_reserve(reserve)
+  reserve = json.loads(reserves_collection.insert_reserve(reserve))
+  print(reserve)
   tours_collection.update_tour_dates(new_dates, result["tourId"])
-  return json.loads(reserve), 201
+  return {'success': 'La reserva fue creada con éxito.', 'id': reserve['$oid']}, 201
 
 @reserves.route("/reserves", methods=['GET'])
 def get_reserves():
@@ -73,7 +74,6 @@ def get_reserves():
 def cancel_reserve(reserveId):
   try:
     reserve = json.loads(reserves_collection.get_reserve_by_id(reserveId))
-    print(reserve)
     if reserve is None:
       return {
           "error": "La reserva no existe." 

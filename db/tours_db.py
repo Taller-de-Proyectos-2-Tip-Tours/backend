@@ -64,20 +64,19 @@ class ToursCollection:
   def drop_collection(self):
     self._tours.drop()
 
-  def get_tour_by_id(self, tourId):
-    data = self._tours.find({"_id" : ObjectId(tourId)}, {"maxParticipants": 1, "dates": 1})
+  def get_tour_by_id(self, tourId, fields = {}):
+    data = self._tours.find_one({"_id" : ObjectId(tourId)}, fields)
     return dumps(data)
   
   def update_tour_dates(self, dates, tourId):
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})
 
   def cancel_tour(self, tourId, date):
-    data = self._tours.find({"_id" : ObjectId(tourId)}, {"dates": 1})
-    tour = json.loads(dumps(data))
-    if (tour is None) or len(tour) == 0:
+    tour = json.loads(self.get_tour_by_id(tourId, {"dates": 1}))
+    if tour is None:
       raise Exception("El tour no existe.")
     new_dates = []
-    for tour_date in tour[0]["dates"]:
+    for tour_date in tour["dates"]:
       if date == tour_date["date"]:
         new_dates.append({
           "date": tour_date["date"],
@@ -89,12 +88,11 @@ class ToursCollection:
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
 
   def cancel_reserve_for_tour(self, tourId, date, people):
-    data = self._tours.find({"_id" : ObjectId(tourId)}, {"dates": 1})
-    tour = json.loads(dumps(data))
-    if (tour is None) or len(tour) == 0:
+    tour = json.loads(self.get_tour_by_id(tourId, {"dates": 1}))
+    if tour is None:
       raise Exception("El tour no existe.")
     new_dates = []
-    for tour_date in tour[0]["dates"]:
+    for tour_date in tour["dates"]:
       if date == tour_date["date"]:
         new_sate = tour_date["state"]
         if new_sate == "cerrado":
