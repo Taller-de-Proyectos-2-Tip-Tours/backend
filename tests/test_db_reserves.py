@@ -10,15 +10,3 @@ def test_get_all_tours():
     collection = ReservesCollection()
     tours = json.loads(collection.get_reserves_for_tour("651b1609031d7156530b2206"))
     assert len(tours) == 1
-
-#Insert tour agrega 1 tour presentes a la mockDB
-#def test_insert_tour():
-#    collection = ReservesCollection()
-#    tours = json.loads(collection.get_reserves_for_tour("65035bf573ae9429e602edf1"))
-#    assert len(tours) == 1
-#    collection.insert_reserve({
-#        "tourId": "65035bf573ae9429e602edf1"
-#    })
-#    tours = json.loads(collection.get_reserves_for_tour("65035bf573ae9429e602edf1"))
-#    assert len(tours) == 2
-#    collection.remove_reserve("Test tour 3")
