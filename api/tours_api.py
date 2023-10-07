@@ -5,10 +5,12 @@ import json
 from marshmallow import Schema, fields, ValidationError, validates_schema
 import time
 from datetime import datetime, timedelta
+from db.reserves_db import ReservesCollection
 
 tours = Blueprint('tours',__name__)
 tours_collection = ToursCollection()
 cities_collection = CitiesCollection()
+reserves_collection = ReservesCollection()
 
 lenguages = ["Español", "Inglés", "Portugués", "Alemán", "Francés", "Italiano"]
 
@@ -129,6 +131,10 @@ def cancel_tours():
        }, 400
     try:
       tours_collection.cancel_tour(tourId, date)
+      reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
+      for reserve in reserves:
+        if reserve['date'] == date:
+          reserves_collection.delete_reserve(reserve['_id']['$oid'])
     except Exception as err:
       return {"error": str(err)}, 400
     return {
