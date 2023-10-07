@@ -64,11 +64,17 @@ def post_tours():
 
 @reserves.route("/reserves", methods=['GET'])
 def get_reserves():
+  reserves_list = {}
+  if (request.args.get('tourId') is None) and (request.args.get('travelerEmail') is None):
+    return {"error": "Debe enviar un tourId o travelerEmail para visualizar los tours"}, 400
   if not (request.args.get('tourId') is None):
-    return json.loads(reserves_collection.get_reserves_for_tour(request.args.get('tourId'))), 200
-  elif not (request.args.get('travelerEmail') is None):
-    return json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail'))), 200
-  return {"error": "Debe enviar un tourId o travelerEmail para visualizar los tours"}, 400
+    reserves_list = json.loads(reserves_collection.get_reserves_for_tour(request.args.get('tourId')))
+  else:
+    reserves_list = json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail')))
+  for reserve in reserves_list:
+    tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'name': 1}))
+    reserve['tourName'] = tour['name']
+  return reserves_list, 200
 
 @reserves.route("/reserves/<reserveId>", methods=['DELETE'])
 def cancel_reserve(reserveId):
