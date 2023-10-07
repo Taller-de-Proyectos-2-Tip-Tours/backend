@@ -20,8 +20,18 @@ def test_complete_tour():
         "dates": ["2023-07-09T14:00"],
         "mainImage": "mockImage",
         "otherImages": ["mockImage2", "mockImage3", "mockImage4"],
-        "lat": 1.2,
-        "lon": 1.4,
+        "stops": [
+            {
+                "lat": 1.3,
+                "lon": 1.2,
+                "tag": "inicio"
+            },
+            {
+                "lat": 1.3,
+                "lon": 1.3,
+                "tag": "fin"
+            }
+        ],
         "guide": {
             "name": "Juan Perez",
             "email": "mail@mail.com"
