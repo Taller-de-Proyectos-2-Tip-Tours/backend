@@ -7,7 +7,7 @@ examples = [
     "maxParticipants": 20,
     "city": "Córdoba",
     "considerations": "Este recorrido es apto para todas las edades. Se recomienda llevar protector solar y calzado cómodo.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Plaza San Martín",
     "guide": {
         "name": "Santiago Marinaro",
@@ -38,7 +38,7 @@ examples = [
     "maxParticipants": 15,
     "city": "Buenos Aires",
     "considerations": "Este paseo es ideal para amantes del arte. Lleva una cámara para capturar las obras maestras que verás.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Plaza de Mayo",
     "dates": [
         {"date": "2023-10-15T14:00:00", "state": "abierto", "people": 0},
@@ -69,7 +69,7 @@ examples = [
     "maxParticipants": 12,
     "city": "San Carlos de Bariloche",
     "considerations": "Se requiere una buena condición física para este paseo. Lleva ropa abrigada y calzado adecuado.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Centro de Bariloche",
     "dates": [
         {"date": "2023-10-08T09:30:00", "state": "abierto", "people": 0},
@@ -100,7 +100,7 @@ examples = [
     "maxParticipants": 10,
     "city": "Córdoba",
     "considerations": "Ven con hambre y dispuesto a disfrutar de la comida local. Alérgicos, tengan precaución.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Mercado Norte",
     "dates": [
         {"date": "2023-10-11T12:00:00", "state": "abierto", "people": 0},
@@ -131,7 +131,7 @@ examples = [
     "maxParticipants": 25,
     "city": "Buenos Aires",
     "considerations": "Vestimenta formal requerida. Reserva con anticipación debido a la alta demanda.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Café Tortoni",
     "dates": [
         {"date": "2023-10-14T19:30:00", "state": "abierto", "people": 0},
@@ -162,7 +162,7 @@ examples = [
     "maxParticipants": 8,
     "city": "San Carlos de Bariloche",
     "considerations": "Se proporcionarán kayaks y equipos de seguridad. No es necesario tener experiencia previa.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Playa Bonita",
     "dates": [
         {"date": "2023-10-07T11:00:00", "state": "abierto", "people": 0},
@@ -193,7 +193,7 @@ examples = [
     "maxParticipants": 12,
     "city": "Córdoba",
     "considerations": "Se recomienda llevar protector solar, agua y un sombrero. No es apto para personas con movilidad reducida.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Refugio de Montaña",
     "dates": [
         {"date": "2023-10-12T09:00:00", "state": "abierto", "people": 0},
@@ -224,7 +224,7 @@ examples = [
     "maxParticipants": 15,
     "city": "Buenos Aires",
     "considerations": "Lleva tu bicicleta o alquila una en el lugar. Se proporcionarán cascos y chalecos de seguridad.",
-    "language": "Español",
+    "lenguage": "Español",
     "meetingPoint": "Parque de la Memoria",
     "dates": [
         {"date": "2023-10-09T16:00:00", "state": "abierto", "people": 0},
