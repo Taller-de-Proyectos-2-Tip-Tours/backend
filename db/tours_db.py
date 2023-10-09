@@ -76,8 +76,10 @@ class ToursCollection:
     if tour is None:
       raise Exception("El tour no existe.")
     new_dates = []
+    canceled_date = False
     for tour_date in tour["dates"]:
       if date == tour_date["date"]:
+        canceled_date = True
         new_dates.append({
           "date": tour_date["date"],
           "state": "cancelado",
@@ -85,6 +87,8 @@ class ToursCollection:
         })
       else:
         new_dates.append(tour_date)
+    if not canceled_date:
+      raise Exception("La fecha seleccionada no existe.")
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
 
   def cancel_reserve_for_tour(self, tourId, date, people):
@@ -92,8 +96,10 @@ class ToursCollection:
     if tour is None:
       raise Exception("El tour no existe.")
     new_dates = []
+    canceled_date = False
     for tour_date in tour["dates"]:
       if date == tour_date["date"]:
+        canceled_date = True
         new_sate = tour_date["state"]
         if new_sate == "cerrado":
           new_sate = "abierto"
@@ -104,5 +110,7 @@ class ToursCollection:
         })
       else:
         new_dates.append(tour_date)
+    if canceled_date == False:
+      raise Exception("La fecha seleccionada no existe.")
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}}) 
     

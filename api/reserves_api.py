@@ -48,17 +48,20 @@ def post_tours():
   # Send data back as JSON
   tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'maxParticipants': 1, 'dates': 1}))
   new_dates = []
+  reserve_created = False
   for date in tour["dates"]:
-    if date["date"] == result["date"]:
+    if date["date"] == result["date"] and date["state"] == "abierto":
       if date["people"] + result["people"] > tour["maxParticipants"]:
         return {"error": "La cantidad de personas de la reserva supera la capacidad del tour"}, 400
       else:
+        reserve_created = True
         date["people"] += result["people"]
       if date["people"] == tour["maxParticipants"]:
         date["state"] = "cerrado"
     new_dates.append(date)
+  if reserve_created == False:
+    return {"error": "La fecha seleccionada no se encuentra disponible."}, 400
   reserve = json.loads(reserves_collection.insert_reserve(reserve))
-  print(reserve)
   tours_collection.update_tour_dates(new_dates, result["tourId"])
   return {'success': 'La reserva fue creada con éxito.', 'id': reserve['$oid']}, 201
 
