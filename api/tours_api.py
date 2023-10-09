@@ -142,3 +142,13 @@ def cancel_tours():
       "tourId": tourId,
       "date": date
     }, 201
+
+@tours.route("/tours/<tourId>", methods=['GET'])
+def get_tour(tourId):
+    try:
+      tour = json.loads(tours_collection.get_tour_by_id(tourId))
+      if tour is None:
+         return {"error": "El tour no existe."}, 404
+      return tour, 200
+    except Exception as err:
+       return {"error": str(err)}, 400
