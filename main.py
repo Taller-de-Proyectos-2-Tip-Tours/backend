@@ -8,11 +8,13 @@ from flask_cors import CORS
 from api.tours_api import tours
 from api.cities_api import cities
 from api.reserves_api import reserves
+from api.reviews_api import reviews
 
 app = Flask(__name__)
 app.register_blueprint(tours)
 app.register_blueprint(cities)
 app.register_blueprint(reserves)
+app.register_blueprint(reviews)
 
 CORS(app)
 
