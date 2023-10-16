@@ -20,9 +20,15 @@ class ReviewsCollection:
         db = client.myDatabase
       self._reviews = db["reviews"]
 
-  def get_reviews_for_tour(self, tourId):
-    data = list(self._reviews.find({"tourId": tourId}))
+  def get_reviews_for_tour(self, tourId, state = None):
+    if state:
+      data = list(self._reviews.find({"tourId": tourId, "state": state}))
+    else:  
+      data = list(self._reviews.find({"tourId": tourId}))
     return dumps(data)
   
   def insert_review(self, review):
     self._reviews.insert_one(review)
+
+  def drop_collection(self):
+    self._reviews.drop()

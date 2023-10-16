@@ -32,6 +32,7 @@ if args.drop_tours:
     try:
         generator.drop_tours()
         generator.drop_reserves()
+        generator.drop_reviews()
     except:
         print("Something went wrong")
     print("Done")
