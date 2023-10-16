@@ -4,6 +4,8 @@ from db.reviews_db import ReviewsCollection
 from marshmallow import Schema, fields, ValidationError, validates_schema
 from db.tours_db import ToursCollection
 from bson.objectid import ObjectId
+from datetime import datetime
+import pytz
 
 reviews = Blueprint('reviews',__name__)
 reviews_collection = ReviewsCollection()
@@ -15,6 +17,8 @@ class ReviewSchema(Schema):
   comment = fields.String(required=True)
   stars = fields.Integer(required=True)
   tourId = fields.String(required=True)
+  date = fields.String(required=True)
+  state = fields.String(required=True)
 
   @validates_schema
   def validate_comment(self, data, **kwargs):
@@ -38,13 +42,17 @@ class ReviewSchema(Schema):
 
 @reviews.route("/reviews/<tourId>", methods=['GET'])
 def get_reviews(tourId):
-    return json.loads(reviews_collection.get_reviews_for_tour(tourId)), 200
+    return json.loads(reviews_collection.get_reviews_for_tour(tourId, request.args.get('state'))), 200
 
 @reviews.route("/reviews/<tourId>", methods=['POST'])
 def post_review(tourId):
     review = request.json
     schema = ReviewSchema()
     review["tourId"] = tourId
+    ar_timezone = pytz.timezone('America/Argentina/Buenos_Aires')
+    current_time_ar = datetime.now(ar_timezone)
+    review["date"] = current_time_ar.strftime('%Y-%m-%dT%H:%M:%S')
+    review["state"] = "active"
     try:
         result = schema.load(review)
     except ValidationError as err:
@@ -52,3 +60,16 @@ def post_review(tourId):
         return jsonify(err.messages), 400
     reviews_collection.insert_review(review)
     return {"success": "La review fue creada con éxito."}, 201
+
+@reviews.route("/reviews/<reviewId>", methods=['DELETE'])
+def delete_review(reviewId):
+    try:
+      review = json.loads(reviews_collection.get_review_by_id(reviewId))
+      if review is None:
+        return {
+            "error": "La review no existe." 
+          }, 404
+      reviews_collection.update_review_state(reviewId, "inactive")
+    except Exception as err:
+      return {"error": str(err)}, 400
+    return {"success": "La review fue desactivada con éxito."}, 200

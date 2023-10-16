@@ -2,6 +2,7 @@ import pymongo
 import sys
 import os
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 
 class ReviewsCollection:
   _reviews = None
@@ -20,9 +21,22 @@ class ReviewsCollection:
         db = client.myDatabase
       self._reviews = db["reviews"]
 
-  def get_reviews_for_tour(self, tourId):
-    data = list(self._reviews.find({"tourId": tourId}))
+  def get_reviews_for_tour(self, tourId, state = None):
+    if state:
+      data = list(self._reviews.find({"tourId": tourId, "state": state}))
+    else:  
+      data = list(self._reviews.find({"tourId": tourId}))
     return dumps(data)
   
   def insert_review(self, review):
     self._reviews.insert_one(review)
+
+  def drop_collection(self):
+    self._reviews.drop()
+
+  def get_review_by_id(self, reviewId):
+    data = self._reviews.find_one({"_id" : ObjectId(reviewId)})
+    return dumps(data)
+  
+  def update_review_state(self, reviewId, state):
+    self._reviews.update_one({"_id" : ObjectId(reviewId)}, {"$set": {"state": state}})

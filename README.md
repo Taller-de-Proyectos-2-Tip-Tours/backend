@@ -23,3 +23,8 @@ python3 main.py --example_tours --drop_tours
 ```
 Pueden usar un o el otro o ninguno, si no usan ninguno se corre el server.
 Tambien pueden usar --help para ver una descripcion de los comandos.
+
+Para activar el environment:
+```
+source my-project-env/bin/activate
+```
