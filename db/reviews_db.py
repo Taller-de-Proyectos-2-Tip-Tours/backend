@@ -2,6 +2,7 @@ import pymongo
 import sys
 import os
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 
 class ReviewsCollection:
   _reviews = None
@@ -32,3 +33,10 @@ class ReviewsCollection:
 
   def drop_collection(self):
     self._reviews.drop()
+
+  def get_review_by_id(self, reviewId):
+    data = self._reviews.find_one({"_id" : ObjectId(reviewId)})
+    return dumps(data)
+  
+  def update_review_state(self, reviewId, state):
+    self._reviews.update_one({"_id" : ObjectId(reviewId)}, {"$set": {"state": state}})

@@ -95,6 +95,6 @@ def cancel_reserve(reserveId):
     reserves_collection.delete_reserve(reserveId)
     tours_collection.cancel_reserve_for_tour(reserve["tourId"], reserve["date"], reserve["people"])
   except Exception as err:
-    return {"error": str(err)}, 400
+    return {"error": str(err)}, 404
   return {"success": "La reserva fue cancelada correctamente"}, 200
   

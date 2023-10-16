@@ -60,3 +60,16 @@ def post_review(tourId):
         return jsonify(err.messages), 400
     reviews_collection.insert_review(review)
     return {"success": "La review fue creada con éxito."}, 201
+
+@reviews.route("/reviews/<reviewId>", methods=['DELETE'])
+def delete_review(reviewId):
+    try:
+      review = json.loads(reviews_collection.get_review_by_id(reviewId))
+      if review is None:
+        return {
+            "error": "La review no existe." 
+          }, 404
+      reviews_collection.update_review_state(reviewId, "inactive")
+    except Exception as err:
+      return {"error": str(err)}, 400
+    return {"success": "La review fue desactivada con éxito."}, 200
