@@ -97,6 +97,7 @@ def get_tours():
     return json.loads(tours_collection.get_all_tours(request.args.get('name'), 
                                                      request.args.get('city'),
                                                      request.args.get('guideEmail'),
+                                                     request.args.get('state'),
                                                      request.args.get('dateState'))), 200
 
 @tours.route("/tours", methods=['POST'])
@@ -113,11 +114,12 @@ def post_tours():
     for date in tour["dates"]:
        aux.append({"date": date, "state": "abierto", "people": 0})
     tour["dates"] = aux
+    tour["state"] = "borrador"
     tours_collection.insert_tour(tour)
     return {"success": "El paseo fue creado con éxito."}, 201
 
 @tours.route("/tours/cancel", methods=['PUT'])
-def cancel_tours():
+def cancel_tour_date():
     tourId = request.args.get('tourId')
     date = request.args.get('date')
     if (tourId is None) or (date is None):
@@ -130,7 +132,7 @@ def cancel_tours():
           "error": "No puede cancelar un paseo a menos de 24 horas del mismo." 
        }, 400
     try:
-      tours_collection.cancel_tour(tourId, date)
+      tours_collection.cancel_tour_date(tourId, date)
       reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
       for reserve in reserves:
         if reserve['date'] == date:
@@ -150,5 +152,13 @@ def get_tour(tourId):
       if tour is None:
          return {"error": "El tour no existe."}, 404
       return tour, 200
+    except Exception as err:
+       return {"error": str(err)}, 400
+    
+@tours.route("/tours/<tourId>", methods=['PUT'])
+def update_tour_state(tourId):
+    try:
+      tours_collection.update_tour_state(tourId, request.args.get('state'))
+      return {"success": "El tour pasó a estado:" + request.args.get('state')}, 201
     except Exception as err:
        return {"error": str(err)}, 400

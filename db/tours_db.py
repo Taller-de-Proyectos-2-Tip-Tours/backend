@@ -22,7 +22,7 @@ class ToursCollection:
         db = client.myDatabase
       self._tours = db["tours"]
 
-  def get_all_tours(self, name = None, city = None, guideEmail = None, dateState = None):
+  def get_all_tours(self, name = None, city = None, guideEmail = None, state = None, dateState = None):
     pipeline = []
 
     # Match stage to filter tours based on other criteria
@@ -33,6 +33,8 @@ class ToursCollection:
         match_stage["city"] = city
     if guideEmail:
         match_stage["guide.email"] = guideEmail
+    if state:
+        match_stage["state"] = state
     pipeline.append({"$match": match_stage})
 
     # Match stage to filter dates with the specified state
@@ -71,7 +73,7 @@ class ToursCollection:
   def update_tour_dates(self, dates, tourId):
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": dates}})
 
-  def cancel_tour(self, tourId, date):
+  def cancel_tour_date(self, tourId, date):
     tour = json.loads(self.get_tour_by_id(tourId, {"dates": 1}))
     if tour is None:
       raise Exception("El tour no existe.")
@@ -112,5 +114,11 @@ class ToursCollection:
         new_dates.append(tour_date)
     if canceled_date == False:
       raise Exception("La fecha seleccionada no existe.")
-    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}}) 
+    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
+
+  def update_tour_state(self, tourId, new_state):
+    tour = json.loads(self.get_tour_by_id(tourId, {}))
+    if tour is None:
+      raise Exception("El tour no existe")
+    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"state": new_state}})
     
