@@ -9,6 +9,7 @@ examples = [
     "considerations": "Este recorrido es apto para todas las edades. Se recomienda llevar protector solar y calzado cómodo.",
     "lenguage": "Español",
     "meetingPoint": "Plaza San Martín",
+    "state": "abierto",
     "guide": {
         "name": "Santiago Marinaro",
         "email": "santiagomarinaro1@gmail.com"
@@ -40,6 +41,7 @@ examples = [
     "considerations": "Este paseo es ideal para amantes del arte. Lleva una cámara para capturar las obras maestras que verás.",
     "lenguage": "Español",
     "meetingPoint": "Plaza de Mayo",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-15T14:00:00", "state": "abierto", "people": 0},
         {"date": "2023-10-17T16:30:00", "state": "abierto", "people": 0}
@@ -71,6 +73,7 @@ examples = [
     "considerations": "Se requiere una buena condición física para este paseo. Lleva ropa abrigada y calzado adecuado.",
     "lenguage": "Español",
     "meetingPoint": "Centro de Bariloche",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-08T09:30:00", "state": "abierto", "people": 0},
         {"date": "2023-10-09T10:00:00", "state": "abierto", "people": 0}
@@ -102,6 +105,7 @@ examples = [
     "considerations": "Ven con hambre y dispuesto a disfrutar de la comida local. Alérgicos, tengan precaución.",
     "lenguage": "Español",
     "meetingPoint": "Mercado Norte",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-11T12:00:00", "state": "abierto", "people": 0},
         {"date": "2023-10-13T19:00:00", "state": "abierto", "people": 0}
@@ -133,6 +137,7 @@ examples = [
     "considerations": "Vestimenta formal requerida. Reserva con anticipación debido a la alta demanda.",
     "lenguage": "Español",
     "meetingPoint": "Café Tortoni",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-14T19:30:00", "state": "abierto", "people": 0},
         {"date": "2023-10-16T20:00:00", "state": "abierto", "people": 0}
@@ -164,6 +169,7 @@ examples = [
     "considerations": "Se proporcionarán kayaks y equipos de seguridad. No es necesario tener experiencia previa.",
     "lenguage": "Español",
     "meetingPoint": "Playa Bonita",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-07T11:00:00", "state": "abierto", "people": 0},
         {"date": "2023-10-09T14:00:00", "state": "abierto", "people": 0}
@@ -195,6 +201,7 @@ examples = [
     "considerations": "Se recomienda llevar protector solar, agua y un sombrero. No es apto para personas con movilidad reducida.",
     "lenguage": "Español",
     "meetingPoint": "Refugio de Montaña",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-12T09:00:00", "state": "abierto", "people": 0},
         {"date": "2023-10-14T10:30:00", "state": "abierto", "people": 0}
@@ -226,6 +233,7 @@ examples = [
     "considerations": "Lleva tu bicicleta o alquila una en el lugar. Se proporcionarán cascos y chalecos de seguridad.",
     "lenguage": "Español",
     "meetingPoint": "Parque de la Memoria",
+    "state": "abierto",
     "dates": [
         {"date": "2023-10-09T16:00:00", "state": "abierto", "people": 0},
         {"date": "2023-10-11T18:00:00", "state": "abierto", "people": 0}
