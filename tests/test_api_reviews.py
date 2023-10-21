@@ -32,3 +32,8 @@ def test_delete_review(app):
     client = app.test_client()
     response = client.delete('/reviews/652dc7828b3175f3026ee2fd')
     assert response.status_code == 200
+
+def test_get_review(app):
+    client = app.test_client()
+    response = client.get('/reviews/12345')
+    assert response.status_code == 200

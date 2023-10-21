@@ -75,8 +75,13 @@ def get_reserves():
   else:
     reserves_list = json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail')))
   for reserve in reserves_list:
-    tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'name': 1}))
+    tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'name': 1, 'dates': 1}))
+    state = "cancelado"
+    for date in tour["dates"]:
+      if date["date"] == reserve["date"]:
+        state = date["state"]
     reserve['tourName'] = tour['name']
+    reserve["state"] = state
   return reserves_list, 200
 
 @reserves.route("/reserves/<reserveId>", methods=['DELETE'])
