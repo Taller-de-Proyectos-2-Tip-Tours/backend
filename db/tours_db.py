@@ -116,9 +116,9 @@ class ToursCollection:
       raise Exception("La fecha seleccionada no existe.")
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"dates": new_dates}})
 
-  def update_tour_state(self, tourId, new_state):
+  def update_tour(self, tourId, updatedTour):
     tour = json.loads(self.get_tour_by_id(tourId, {}))
     if tour is None:
       raise Exception("El tour no existe")
-    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": {"state": new_state}})
+    self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": updatedTour})
     

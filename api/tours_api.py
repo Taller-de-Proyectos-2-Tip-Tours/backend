@@ -157,8 +157,12 @@ def get_tour(tourId):
     
 @tours.route("/tours/<tourId>", methods=['PUT'])
 def update_tour_state(tourId):
+    updated_tour = request.json
+    if not (updated_tour.get("_id") is None):
+      updated_tour.pop("_id")
+    print(updated_tour)
     try:
-      tours_collection.update_tour_state(tourId, request.args.get('state'))
-      return {"success": "El tour pasó a estado:" + request.args.get('state')}, 201
+      tours_collection.update_tour(tourId, updated_tour)
+      return {"success": "El tour fue actualizado correctamente"}, 201
     except Exception as err:
        return {"error": str(err)}, 400
