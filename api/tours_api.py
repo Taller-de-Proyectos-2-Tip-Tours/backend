@@ -139,7 +139,7 @@ def cancel_tour_date():
       for reserve in reserves:
         if reserve['date'] == date:
           notificator.notify_cancelled_tour_date(reserve["traveler"]["email"])
-          #reserves_collection.delete_reserve(reserve['_id']['$oid'])
+          reserves_collection.delete_reserve(reserve['_id']['$oid'])
     except Exception as err:
       return {"error": str(err)}, 400
     return {
