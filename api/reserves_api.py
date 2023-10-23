@@ -51,6 +51,11 @@ def post_tours():
   reserve_created = False
   for date in tour["dates"]:
     if date["date"] == result["date"] and date["state"] == "abierto":
+      time_difference = datetime.strptime(date["date"], "%Y-%m-%dT%H:%M:%S") - datetime.now()
+      if time_difference < timedelta(hours=24):
+          return {
+            "error": "No puede crear una reserva a menos de 24 horas de la misma." 
+          }, 400
       if date["people"] + result["people"] > tour["maxParticipants"]:
         return {"error": "La cantidad de personas de la reserva supera la capacidad del tour"}, 400
       else:
@@ -93,7 +98,7 @@ def cancel_reserve(reserveId):
           "error": "La reserva no existe." 
         }, 400
     time_difference = datetime.strptime(reserve["date"], "%Y-%m-%dT%H:%M:%S") - datetime.now()
-    if abs(time_difference) < timedelta(hours=24):
+    if time_difference < timedelta(hours=24):
         return {
           "error": "No puede cancelar una reserva a menos de 24 horas de la misma." 
         }, 400
