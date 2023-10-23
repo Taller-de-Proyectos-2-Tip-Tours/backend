@@ -6,11 +6,13 @@ from marshmallow import Schema, fields, ValidationError, validates_schema
 import time
 from datetime import datetime, timedelta
 from db.reserves_db import ReservesCollection
+from utilities.notificator import Notificator
 
 tours = Blueprint('tours',__name__)
 tours_collection = ToursCollection()
 cities_collection = CitiesCollection()
 reserves_collection = ReservesCollection()
+notificator = Notificator() 
 
 lenguages = ["Español", "Inglés", "Portugués", "Alemán", "Francés", "Italiano"]
 
@@ -136,7 +138,8 @@ def cancel_tour_date():
       reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
       for reserve in reserves:
         if reserve['date'] == date:
-          reserves_collection.delete_reserve(reserve['_id']['$oid'])
+          notificator.notify_cancelled_tour_date(reserve["traveler"]["email"])
+          #reserves_collection.delete_reserve(reserve['_id']['$oid'])
     except Exception as err:
       return {"error": str(err)}, 400
     return {
