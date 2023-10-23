@@ -27,3 +27,10 @@ class Notificator:
       self._send_notification("Paseo cancelado", 
                               "Disculpe, la fecha de su paseo ha sido cancelado. Lamentamos cualquier inconveniente causado.", 
                               token)
+
+  def notify_modified_tour(self, userEmail):
+    tokens = self._users.get_device_token_by_email(userEmail)
+    for token in tokens:
+      self._send_notification("Paseo modificado", 
+                              "Se ha realizado un cambio en los detalles de su paseo. Le solicitamos revisar la información actualizada.", 
+                              token)

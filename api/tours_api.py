@@ -136,10 +136,13 @@ def cancel_tour_date():
     try:
       tours_collection.cancel_tour_date(tourId, date)
       reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
+      unique_emails = set()
       for reserve in reserves:
         if reserve['date'] == date:
-          notificator.notify_cancelled_tour_date(reserve["traveler"]["email"])
+          unique_emails.add(reserve["traveler"]["email"])
           reserves_collection.delete_reserve(reserve['_id']['$oid'])
+      for email in unique_emails:
+        notificator.notify_cancelled_tour_date(email)
     except Exception as err:
       return {"error": str(err)}, 400
     return {
@@ -163,9 +166,14 @@ def update_tour_state(tourId):
     updated_tour = request.json
     if not (updated_tour.get("_id") is None):
       updated_tour.pop("_id")
-    print(updated_tour)
     try:
       tours_collection.update_tour(tourId, updated_tour)
+      reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
+      unique_emails = set()
+      for reserve in reserves:
+        unique_emails.add(reserve["traveler"]["email"])
+      for email in unique_emails:
+        notificator.notify_modified_tour(email)
       return {"success": "El tour fue actualizado correctamente"}, 201
     except Exception as err:
        return {"error": str(err)}, 400
