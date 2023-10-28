@@ -22,3 +22,9 @@ class Controller:
       reserves = json.loads(self._reserves_collection.get_reserves_for_tour(tour["_id"]["$oid"]))
       for reserve in reserves:
         self._reserves_collection.change_reserve_state(reserve["_id"]["$oid"], "finalizado")
+
+  def reserve_reminder(self):
+    print("Executing reserve reminder")
+    today = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    reserves = json.loads(self._reserves_collection.get_reserves_coming_soon(today))
+    print(reserves)
