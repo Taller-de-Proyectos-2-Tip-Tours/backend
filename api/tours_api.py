@@ -136,13 +136,16 @@ def cancel_tour_date():
     try:
       tours_collection.cancel_tour_date(tourId, date)
       reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
-      unique_emails = set()
+      tour_data = {
+        "date": date,
+        "state": "cancelado",
+        "tourId": tourId
+      }
       for reserve in reserves:
-        if reserve['date'] == date:
-          unique_emails.add(reserve["traveler"]["email"])
-          reserves_collection.delete_reserve(reserve['_id']['$oid'])
-      for email in unique_emails:
-        notificator.notify_cancelled_tour_date(email)
+        if reserve['date'] == date and reserve["state"] == "abierto":
+          tour_data["reserveId"] = reserve['_id']['$oid']
+          reserves_collection.change_reserve_state(reserve['_id']['$oid'], "cancelado")
+          notificator.notify_cancelled_tour_date(reserve["traveler"]["email"], tour_data)
     except Exception as err:
       return {"error": str(err)}, 400
     return {
@@ -169,11 +172,15 @@ def update_tour_state(tourId):
     try:
       tours_collection.update_tour(tourId, updated_tour)
       reserves = json.loads(reserves_collection.get_reserves_for_tour(tourId))
-      unique_emails = set()
+      tour_data = {
+        "tourId": tourId
+      }
       for reserve in reserves:
-        unique_emails.add(reserve["traveler"]["email"])
-      for email in unique_emails:
-        notificator.notify_modified_tour(email)
+        if reserve["state"] == "abierto":
+          tour_data["reserveId"] = reserve['_id']['$oid']
+          tour_data["date"] = reserve['date']
+          tour_data["state"] = reserve['state']
+          notificator.notify_modified_tour(reserve["traveler"]["email"], tour_data)
       return {"success": "El tour fue actualizado correctamente"}, 201
     except Exception as err:
        return {"error": str(err)}, 400

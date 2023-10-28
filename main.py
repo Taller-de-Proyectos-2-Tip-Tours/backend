@@ -13,6 +13,7 @@ from api.reserves_api import reserves
 from api.reviews_api import reviews
 from utilities.controller import Controller
 from api.admins_api import admins
+from api.users_api import users
 
 app = Flask(__name__)
 app.register_blueprint(tours)
@@ -20,6 +21,7 @@ app.register_blueprint(cities)
 app.register_blueprint(reserves)
 app.register_blueprint(reviews)
 app.register_blueprint(admins)
+app.register_blueprint(users)
 
 CORS(app)
 
@@ -57,7 +59,7 @@ controller = Controller()
 # main driver function
 if __name__ == "__main__" and (not args.example_tours) and (not args.drop_tours):
     scheduler = BackgroundScheduler()
-    scheduler.add_job(controller.end_tours, 'interval', minutes=60)
+    scheduler.add_job(controller.end_tours, 'interval', minutes=30)
     scheduler.start()
     app.run(host='0.0.0.0')
     scheduler.shutdown()

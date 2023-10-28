@@ -57,7 +57,7 @@ def test_cancel_tour_date(app):
 def test_update_state_tour(app):
     client = app.test_client()
     body = {
-        "state": "cerrado"
+        "state": "cancelado"
     }
     response = client.put('/tours/651b1609031d7156530b2206', json=body)
     assert response.status_code == 201

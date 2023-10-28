@@ -1,6 +1,7 @@
 import pymongo
 import sys
 import json
+import os
 from bson.json_util import dumps
 
 class UsersCollection:
@@ -14,7 +15,10 @@ class UsersCollection:
         print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string?")
         sys.exit(1)
       # use a database named "myDatabase"
-      db = client.myDatabase
+      if os.environ["TESTING"] == "True":
+        db = client.mockDatabase
+      else:
+        db = client.myDatabase
       self._users = db["users"]
 
   def get_device_token_by_email(self, userEmail):
@@ -23,4 +27,19 @@ class UsersCollection:
     if user is None:
       return []
     return user["devicesTokens"]
+  
+  def get_user_by_email(self, userEmail):
+    data = self._users.find_one({"userEmail": userEmail})
+    return json.loads(dumps(data))
+  
+  def create_new_user(self, user):
+    self._users.insert_one(user)
+
+  def add_new_token(self, userEmail, token):
+    data = self._users.find_one({"userEmail": userEmail})
+    user = json.loads(dumps(data))
+    self._users.update_one(
+        {"_id": user["_id"]["$oid"]},
+        {"$push": {"deviceToken": token}}
+    )
   

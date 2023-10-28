@@ -30,8 +30,8 @@ def app():
 
 def test_reserve_using_api(app):
     request = {
-        "tourId": "651b1609031d7156530b2206",
-        "date": "2024-10-13T09:00:00",
+        "tourId": "651b1636031d7156530b2207",
+        "date": "2024-10-18T08:00:00",
         "traveler": {
             "name": "Diego",
             "email": "mail@mail.com"
