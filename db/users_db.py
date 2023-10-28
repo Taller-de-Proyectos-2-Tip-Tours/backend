@@ -24,3 +24,18 @@ class UsersCollection:
       return []
     return user["devicesTokens"]
   
+  def get_user_by_email(self, userEmail):
+    data = self._users.find_one({"userEmail": userEmail})
+    return json.loads(dumps(data))
+  
+  def create_new_user(self, user):
+    self._users.insert_one(user)
+
+  def add_new_token(self, userEmail, token):
+    data = self._users.find_one({"userEmail": userEmail})
+    user = json.loads(dumps(data))
+    self._users.update_one(
+        {"_id": user["_id"]["$oid"]},
+        {"$push": {"deviceToken": token}}
+    )
+  
