@@ -35,6 +35,8 @@ class ToursCollection:
         match_stage["guide.email"] = guideEmail
     if state:
         match_stage["state"] = state
+    if dateState:
+        match_stage["dates.state"] = dateState
     pipeline.append({"$match": match_stage})
 
     # Match stage to filter dates with the specified state
@@ -50,6 +52,9 @@ class ToursCollection:
                 }
             }
         })
+
+    # Match stage to filter out tours with empty dates array
+    pipeline.append({"$match": {"dates": {"$ne": []}}})
 
     data = self._tours.aggregate(pipeline)
     return dumps(data)
@@ -121,4 +126,18 @@ class ToursCollection:
     if tour is None:
       raise Exception("El tour no existe")
     self._tours.update_one({"_id" : ObjectId(tourId)}, {"$set": updatedTour})
+
+  def get_old_dates(self, date):
+    data = self._tours.find(
+      {
+        "dates": {
+          "$elemMatch": {
+              "date": {"$lt": date},
+              "state": "abierto"
+          }
+        }
+      },
+      {"dates": 1}
+    )
+    return dumps(data)
     

@@ -1,5 +1,7 @@
 import os
 import argparse
+from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
 
 os.environ["TESTING"] = "False"
 
@@ -9,7 +11,7 @@ from api.tours_api import tours
 from api.cities_api import cities
 from api.reserves_api import reserves
 from api.reviews_api import reviews
-#from utilities.notificator import Notificator
+from utilities.controller import Controller
 from api.admins_api import admins
 
 app = Flask(__name__)
@@ -50,9 +52,12 @@ if args.example_tours:
         print("Something went wrong")
     print("Done")
 
-#notificator = Notificator()
+controller = Controller()
 
 # main driver function
 if __name__ == "__main__" and (not args.example_tours) and (not args.drop_tours):
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(controller.end_tours, 'interval', minutes=60)
+    scheduler.start()
     app.run(host='0.0.0.0')
-    #notificator.send_notification("Titulo de notificacion", "Esta es nuestra primer notificacion")
+    scheduler.shutdown()
