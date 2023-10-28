@@ -124,12 +124,13 @@ def post_tours():
 def cancel_tour_date():
     tourId = request.args.get('tourId')
     date = request.args.get('date')
+    isAdmin = request.args.get('isAdmin', default='False')
     if (tourId is None) or (date is None):
        return {
           "error": "Debe enviar un tourId y date para cancelar." 
        }, 400
     time_difference = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S") - datetime.now()
-    if abs(time_difference) < timedelta(hours=24):
+    if (abs(time_difference) < timedelta(hours=24)) and (isAdmin == "False"):
        return {
           "error": "No puede cancelar un paseo a menos de 24 horas del mismo." 
        }, 400
