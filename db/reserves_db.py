@@ -37,8 +37,8 @@ class ReservesCollection:
     data = self._reserves.find_one({"_id" : ObjectId(reserveId)})
     return dumps(data)
   
-  def delete_reserve(self, reserveId):
-    self._reserves.delete_one({"_id" : ObjectId(reserveId)})
+  def change_reserve_state(self, reserveId, state):
+    self._reserves.update_one({"_id" : ObjectId(reserveId)}, {"$set": {"state": state}})
 
   def drop_collection(self):
     self._reserves.drop()

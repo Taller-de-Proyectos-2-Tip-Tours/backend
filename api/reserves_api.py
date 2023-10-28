@@ -38,7 +38,7 @@ class ReservesSchema(Schema):
       raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour['maxParticipants'] * 0.5)))
 
 @reserves.route("/reserves", methods=['POST'])
-def post_tours():
+def post_reserve():
   reserve = request.json
   schema = ReservesSchema()
   try:
@@ -66,6 +66,7 @@ def post_tours():
     new_dates.append(date)
   if reserve_created == False:
     return {"error": "La fecha seleccionada no se encuentra disponible."}, 400
+  reserve["state"] = "abierto"
   reserve = json.loads(reserves_collection.insert_reserve(reserve))
   tours_collection.update_tour_dates(new_dates, result["tourId"])
   return {'success': 'La reserva fue creada con éxito.', 'id': reserve['$oid']}, 201
@@ -81,12 +82,7 @@ def get_reserves():
     reserves_list = json.loads(reserves_collection.get_reserves_for_traveler(request.args.get('travelerEmail')))
   for reserve in reserves_list:
     tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'name': 1, 'dates': 1}))
-    state = "cancelado"
-    for date in tour["dates"]:
-      if date["date"] == reserve["date"]:
-        state = date["state"]
     reserve['tourName'] = tour['name']
-    reserve["state"] = state
   return reserves_list, 200
 
 @reserves.route("/reserves/<reserveId>", methods=['DELETE'])
@@ -102,7 +98,7 @@ def cancel_reserve(reserveId):
         return {
           "error": "No puede cancelar una reserva a menos de 24 horas de la misma." 
         }, 400
-    reserves_collection.delete_reserve(reserveId)
+    reserves_collection.change_reserve_state(reserveId, "cancelado")
     tours_collection.cancel_reserve_for_tour(reserve["tourId"], reserve["date"], reserve["people"])
   except Exception as err:
     return {"error": str(err)}, 404
