@@ -12,9 +12,7 @@ python3 -m pytest --cov-report term --cov=./ tests/ --cov-fail-under=70
 Si tienen problemas de dependencias ejecutar:
 
 ```
-pip install pytest-cov
-
-pip install -U pytest
+pip install --no-cache-dir -r requirements.txt
 ```
 
 # Como usar los comandos
