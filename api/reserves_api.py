@@ -5,6 +5,7 @@ from db.tours_db import ToursCollection
 from bson.objectid import ObjectId
 from db.reserves_db import ReservesCollection
 from datetime import datetime, timedelta
+import pytz
 
 reserves = Blueprint('reserves',__name__)
 tours_collection = ToursCollection()
@@ -51,7 +52,9 @@ def post_reserve():
   reserve_created = False
   for date in tour["dates"]:
     if date["date"] == result["date"] and date["state"] == "abierto":
-      time_difference = datetime.strptime(date["date"], "%Y-%m-%dT%H:%M:%S") - datetime.now()
+      argentina_timezone = pytz.timezone('America/Argentina/Buenos_Aires')
+      tour_date = argentina_timezone.localize(datetime.strptime(date["date"], "%Y-%m-%dT%H:%M:%S"))
+      time_difference = tour_date - datetime.now(argentina_timezone)
       if time_difference < timedelta(hours=24):
           return {
             "error": "No puede crear una reserva a menos de 24 horas de la misma." 

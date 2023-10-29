@@ -42,4 +42,7 @@ class UsersCollection:
         {"_id": user["_id"]["$oid"]},
         {"$push": {"deviceToken": token}}
     )
+
+  def drop_collection(self):
+    self._users.drop()
   
