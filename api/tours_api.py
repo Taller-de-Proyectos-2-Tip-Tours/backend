@@ -7,6 +7,7 @@ import time
 from datetime import datetime, timedelta
 from db.reserves_db import ReservesCollection
 from utilities.notificator import Notificator
+import pytz
 
 tours = Blueprint('tours',__name__)
 tours_collection = ToursCollection()
@@ -129,7 +130,9 @@ def cancel_tour_date():
        return {
           "error": "Debe enviar un tourId y date para cancelar." 
        }, 400
-    time_difference = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S") - datetime.now()
+    argentina_timezone = pytz.timezone('America/Argentina/Buenos_Aires')
+    tour_date = argentina_timezone.localize(datetime.strptime(date, "%Y-%m-%dT%H:%M:%S"))
+    time_difference = tour_date - datetime.now(argentina_timezone)
     if (abs(time_difference) < timedelta(hours=24)) and (isAdmin == "False"):
        return {
           "error": "No puede cancelar un paseo a menos de 24 horas del mismo." 

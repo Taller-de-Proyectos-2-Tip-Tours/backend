@@ -51,7 +51,7 @@ def app():
 
 def test_cancel_tour_date(app):
     client = app.test_client()
-    response = client.put('/tours/cancel?tourId=651b1609031d7156530b2206&date=2024-10-15T10:30:00')
+    response = client.put('/tours/cancel?tourId=651b1609031d7156530b2206&date=2024-10-15T10:30:00&isAdmin=True')
     assert response.status_code == 201
 
 def test_update_state_tour(app):
