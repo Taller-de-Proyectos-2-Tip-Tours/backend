@@ -26,15 +26,15 @@ class ReservesCollection:
     return dumps(data.inserted_id)
 
   def get_reserves_for_tour(self, tourId):
-    data = self._reserves.find({"tourId": tourId})
+    data = self._reserves.find({"tourId": tourId}, {"notified": 0})
     return dumps(data)
   
   def get_reserves_for_traveler(self, email):
-    data = self._reserves.find({"traveler.email": email})
+    data = self._reserves.find({"traveler.email": email}, {"notified": 0})
     return dumps(data)
   
   def get_reserve_by_id(self, reserveId):
-    data = self._reserves.find_one({"_id" : ObjectId(reserveId)})
+    data = self._reserves.find_one({"_id" : ObjectId(reserveId)}, {"notified": 0})
     return dumps(data)
   
   def change_reserve_state(self, reserveId, state):
@@ -43,4 +43,9 @@ class ReservesCollection:
   def drop_collection(self):
     self._reserves.drop()
 
-  
+  def get_reserves_coming_soon(self, date):
+    data = self._reserves.find({"date": {"$lt": date}, "notified": {"$exists": False}, "state": "abierto"}, {"notified": 0})
+    return dumps(data)
+
+  def mark_notified(self, reserveId):
+    self._reserves.update_one({"_id" : ObjectId(reserveId)}, {"$set": {"notified": 1}})

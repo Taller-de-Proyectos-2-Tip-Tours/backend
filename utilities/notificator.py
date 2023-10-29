@@ -38,3 +38,11 @@ class Notificator:
                               "Se ha realizado un cambio en los detalles de su paseo. Le solicitamos revisar la información actualizada.", 
                               token,
                               tourData)
+      
+  def notify_reserve_reminder(self, userEmail, tourData):
+    tokens = self._users.get_device_token_by_email(userEmail)
+    for token in tokens:
+      self._send_notification("Recordatorio de reserva", 
+                              "Recuerde que tiene una reserva para un paseo a menos de 24 horas. Le solicitamos revisar los detalles y prepararse.", 
+                              token,
+                              tourData)
