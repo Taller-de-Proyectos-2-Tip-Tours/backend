@@ -44,8 +44,9 @@ examples = [
     "meetingPoint": "Plaza de Mayo",
     "state": "abierto",
     "dates": [
-        {"date": "2023-10-31T14:00:00", "state": "abierto", "people": 0},
-        {"date": "2023-11-17T16:30:00", "state": "abierto", "people": 0}
+        {"date": "2023-10-31T19:10:00", "state": "abierto", "people": 0},
+        {"date": "2023-10-31T19:20:00", "state": "abierto", "people": 0},
+        {"date": "2023-10-31T19:30:00", "state": "abierto", "people": 0}
     ],
     "guide": {
         "name": "Juan Pérez",

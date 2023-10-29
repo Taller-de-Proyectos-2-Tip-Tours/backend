@@ -34,19 +34,20 @@ args = parser.parse_args()
 
 if args.drop_tours:
     print("Droping DB.....")
-    from tests.examples_generator import ToursExampleGenerator
+    from utilities.examples_generator import ToursExampleGenerator
     generator = ToursExampleGenerator()
     try:
         generator.drop_tours()
         generator.drop_reserves()
         generator.drop_reviews()
+        generator.drop_users()
     except:
         print("Something went wrong")
     print("Done")
 
 if args.example_tours:
     print("Generating examples.....")
-    from tests.examples_generator import ToursExampleGenerator
+    from utilities.examples_generator import ToursExampleGenerator
     generator = ToursExampleGenerator()
     try:
         generator.generate_examples()
