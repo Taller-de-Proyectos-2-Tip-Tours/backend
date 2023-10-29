@@ -59,8 +59,8 @@ controller = Controller()
 # main driver function
 if __name__ == "__main__" and (not args.example_tours) and (not args.drop_tours):
     scheduler = BackgroundScheduler()
-    scheduler.add_job(controller.end_tours, 'interval', minutes=30)
-    scheduler.add_job(controller.reserve_reminder, 'interval', seconds=10)
+    scheduler.add_job(controller.end_tours, 'interval', minutes=1)
+    scheduler.add_job(controller.reserve_reminder, 'interval', minutes=1)
     scheduler.start()
     app.run(host='0.0.0.0')
     scheduler.shutdown()
