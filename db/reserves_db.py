@@ -47,4 +47,5 @@ class ReservesCollection:
     data = self._reserves.find({"date": {"$lt": date}, "notified": {"$exists": False}, "state": "abierto"}, {"notified": 0})
     return dumps(data)
 
-  
+  def mark_notified(self, reserveId):
+    self._reserves.update_one({"_id" : ObjectId(reserveId)}, {"$set": {"notified": 1}})
