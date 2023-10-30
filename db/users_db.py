@@ -3,6 +3,7 @@ import sys
 import json
 import os
 from bson.json_util import dumps
+from bson.objectid import ObjectId
 
 class UsersCollection:
   _users = None
@@ -38,9 +39,13 @@ class UsersCollection:
   def add_new_token(self, userEmail, token):
     data = self._users.find_one({"userEmail": userEmail})
     user = json.loads(dumps(data))
+    new_tokens = []
+    for existing_token in user["devicesTokens"]:
+      new_tokens.append(existing_token)
+    new_tokens.append(token)
     self._users.update_one(
-        {"_id": user["_id"]["$oid"]},
-        {"$push": {"deviceToken": token}}
+        {"_id": ObjectId(user["_id"]["$oid"])},
+        {"$push": {"devicesTokens": token}}
     )
 
   def drop_collection(self):
