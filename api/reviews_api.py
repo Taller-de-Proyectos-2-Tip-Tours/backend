@@ -7,6 +7,8 @@ from bson.objectid import ObjectId
 from datetime import datetime
 import pytz
 
+from utilities.authentication import token_required
+
 reviews = Blueprint('reviews',__name__)
 reviews_collection = ReviewsCollection()
 tours_collection = ToursCollection()
@@ -41,10 +43,12 @@ class ReviewSchema(Schema):
       raise ValidationError("El tour seleccionado no existe.")
 
 @reviews.route("/reviews/<tourId>", methods=['GET'])
+@token_required
 def get_reviews(tourId):
     return json.loads(reviews_collection.get_reviews_for_tour(tourId, request.args.get('state'))), 200
 
 @reviews.route("/reviews/<tourId>", methods=['POST'])
+@token_required
 def post_review(tourId):
     review = request.json
     schema = ReviewSchema()
@@ -62,6 +66,7 @@ def post_review(tourId):
     return {"success": "La review fue creada con éxito."}, 201
 
 @reviews.route("/reviews/<reviewId>", methods=['DELETE'])
+@token_required
 def delete_review(reviewId):
     try:
       review = json.loads(reviews_collection.get_review_by_id(reviewId))

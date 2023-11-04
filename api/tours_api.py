@@ -6,6 +6,7 @@ from marshmallow import Schema, fields, ValidationError, validates_schema
 import time
 from datetime import datetime, timedelta
 from db.reserves_db import ReservesCollection
+from utilities.authentication import token_required
 from utilities.notificator import Notificator
 import pytz
 
@@ -96,6 +97,7 @@ class ToursSchema(Schema):
           raise ValidationError("El paseo debe contener entre 2 y 4 imagenes extras")
 
 @tours.route("/tours", methods=['GET'])
+@token_required
 def get_tours():
     return json.loads(tours_collection.get_all_tours(request.args.get('name'), 
                                                      request.args.get('city'),
@@ -104,6 +106,7 @@ def get_tours():
                                                      request.args.get('dateState'))), 200
 
 @tours.route("/tours", methods=['POST'])
+@token_required
 def post_tours():
     tour = request.json
     schema = ToursSchema()
@@ -122,6 +125,7 @@ def post_tours():
     return {"success": "El paseo fue creado con éxito."}, 201
 
 @tours.route("/tours/cancel", methods=['PUT'])
+@token_required
 def cancel_tour_date():
     tourId = request.args.get('tourId')
     date = request.args.get('date')
@@ -159,6 +163,7 @@ def cancel_tour_date():
     }, 201
 
 @tours.route("/tours/<tourId>", methods=['GET'])
+@token_required
 def get_tour(tourId):
     try:
       tour = json.loads(tours_collection.get_tour_by_id(tourId))
@@ -169,6 +174,7 @@ def get_tour(tourId):
        return {"error": str(err)}, 400
     
 @tours.route("/tours/<tourId>", methods=['PUT'])
+@token_required
 def update_tour_state(tourId):
     updated_tour = request.json
     if not (updated_tour.get("_id") is None):

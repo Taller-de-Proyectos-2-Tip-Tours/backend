@@ -1,2 +1,2 @@
 [run]
-omit = __init__.py, main.py, tours_examples.py, test_*.py, admins*.py, notificator.py, cities.py, controller.py, examples_generator.py
+omit = __init__.py, authentication.py, main.py, tours_examples.py, test_*.py, admins*.py, notificator.py, cities.py, controller.py, examples_generator.py
