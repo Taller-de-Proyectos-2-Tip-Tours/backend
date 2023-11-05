@@ -7,6 +7,8 @@ from db.reserves_db import ReservesCollection
 from datetime import datetime, timedelta
 import pytz
 
+from utilities.authentication import token_required
+
 reserves = Blueprint('reserves',__name__)
 tours_collection = ToursCollection()
 reserves_collection = ReservesCollection()
@@ -39,6 +41,7 @@ class ReservesSchema(Schema):
       raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour['maxParticipants'] * 0.5)))
 
 @reserves.route("/reserves", methods=['POST'])
+@token_required
 def post_reserve():
   reserve = request.json
   schema = ReservesSchema()
@@ -75,6 +78,7 @@ def post_reserve():
   return {'success': 'La reserva fue creada con éxito.', 'id': reserve['$oid']}, 201
 
 @reserves.route("/reserves", methods=['GET'])
+@token_required
 def get_reserves():
   reserves_list = {}
   if (request.args.get('tourId') is None) and (request.args.get('travelerEmail') is None):
@@ -89,6 +93,7 @@ def get_reserves():
   return reserves_list, 200
 
 @reserves.route("/reserves/<reserveId>", methods=['DELETE'])
+@token_required
 def cancel_reserve(reserveId):
   try:
     reserve = json.loads(reserves_collection.get_reserve_by_id(reserveId))

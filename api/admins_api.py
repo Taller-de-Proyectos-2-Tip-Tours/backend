@@ -1,6 +1,7 @@
 from flask import request, jsonify, Blueprint
 import json
 from db.admins_db import AdminsCollection
+from utilities.authentication import token_required
 
 admins = Blueprint('admins',__name__)
 admins_collection = AdminsCollection()
