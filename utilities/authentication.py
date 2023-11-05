@@ -5,7 +5,8 @@ from firebase_admin import auth, credentials
 import os
 
 valid_token = "my_secret_token"
-cred = credentials.Certificate("tip-tours-df5b5-firebase-adminsdk-659l9-e5b2e8dd16.json")
+if not (os.environ["TESTING"] == "True"):
+  cred = credentials.Certificate("tip-tours-df5b5-firebase-adminsdk-659l9-e5b2e8dd16.json")
 firebase_admin.initialize_app(cred)
 
 def verify_token(id_token):
