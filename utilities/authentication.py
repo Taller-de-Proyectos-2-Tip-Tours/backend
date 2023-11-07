@@ -3,19 +3,23 @@ from flask import request, jsonify
 import firebase_admin
 from firebase_admin import auth, credentials
 import os
+import jwt
 
-valid_token = "my_secret_token"
 cred = None
 if not (os.environ["TESTING"] == "True"):
   cred = credentials.Certificate("tip-tours-df5b5-firebase-adminsdk-659l9-e5b2e8dd16.json")
 firebase_admin.initialize_app(cred)
 
-def verify_token(id_token):
+def verify_token(token):
   try:
-    decoded_token = auth.verify_id_token(id_token)
+    decoded_token = auth.verify_id_token(token)
     return decoded_token
   except Exception as e:
-    return None
+    try:
+      payload = jwt.decode(token, os.getenv("encryptKey"), algorithms="HS256")
+      return payload['sub']
+    except Exception as e:
+      return None
 
 def token_required(f):
   @wraps(f)

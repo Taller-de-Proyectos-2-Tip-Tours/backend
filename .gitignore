@@ -2,6 +2,7 @@
 .svn
 .hgsvn
 *-env/
+.env
 
 # Ignore local virtualenvs
 lib/

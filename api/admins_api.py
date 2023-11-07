@@ -1,10 +1,24 @@
-from flask import request, jsonify, Blueprint
+import datetime
+from flask import request, Blueprint
 import json
 from db.admins_db import AdminsCollection
-from utilities.authentication import token_required
+import jwt
+import os
 
 admins = Blueprint('admins',__name__)
 admins_collection = AdminsCollection()
+
+def generate_token(username):
+  payload = {
+    'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, hours=2),
+    'iat': datetime.datetime.utcnow(),
+    'sub': username
+  }
+  return jwt.encode(
+    payload,
+    os.getenv("encryptKey"),
+    algorithm='HS256'
+  )
 
 @admins.route("/admins/login", methods=['POST'])
 def admins_login():
@@ -12,4 +26,5 @@ def admins_login():
   admin = json.loads(admins_collection.get_admin(credentials.get("username"), credentials.get("password")))
   if admin is None:
     return {"error": "Usuario o contraseña incorrecto"}, 400    
-  return {"success": "Login exitoso"}, 200
+  token = generate_token(credentials.get("username"))
+  return {"success": "Login exitoso", "token": token}, 200
