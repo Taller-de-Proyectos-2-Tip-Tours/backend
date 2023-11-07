@@ -2,9 +2,10 @@ import requests
 import json
 from db.users_db import UsersCollection
 from db.reserves_db import ReservesCollection
+import os
 
 class Notificator:
-  _serverToken = "AAAASVPSQX8:APA91bGpxJat6nwLjzgpu9k0k-lf9oFA_65If4VHJWlxVI5RMchWsf_k8GXk4MTvEvl7lrbNHtUVgS_7vZYrCSC0OXdet245twnaVpq-TxPu_ul_GbJYdIgP4kgldg6fT_hplNcyU7FO"
+  _serverToken = os.getenv("serverToken")
   _reserves = ReservesCollection()
   _users = UsersCollection()
 

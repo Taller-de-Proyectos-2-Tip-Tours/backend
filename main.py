@@ -2,7 +2,9 @@ import os
 import argparse
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
+from dotenv import load_dotenv
 
+load_dotenv()
 os.environ["TESTING"] = "False"
 
 from flask import Flask
