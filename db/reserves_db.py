@@ -34,7 +34,7 @@ class ReservesCollection:
     return dumps(data)
   
   def get_reserves_for_traveler_tour(self, email, tourId):
-    data = self._reserves.find({"traveler.email": email, "tourId": tourId}, {"notified": 0})
+    data = self._reserves.find({"traveler.email": email, "tourId": tourId, "state": "abierto"}, {"notified": 0})
     return dumps(data)
   
   def get_reserve_by_id(self, reserveId):
