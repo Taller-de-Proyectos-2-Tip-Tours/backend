@@ -172,9 +172,12 @@ def get_tour(tourId):
       if tour is None:
         return {"error": "El tour no existe."}, 404
       reviews = json.loads(reviews_collection.get_reviews_for_tour(tour["_id"]["$oid"], state="active"))
-      total_stars = sum(review["stars"] for review in reviews)
-      average_stars = total_stars / len(reviews)
-      tour["averageRating"] = average_stars
+      if len(reviews) > 0:
+        total_stars = sum(review["stars"] for review in reviews)
+        average_stars = total_stars / len(reviews)
+        tour["averageRating"] = average_stars
+      else:
+         tour["averageRating"] = 0
       return tour, 200
     except Exception as err:
       return {"error": str(err)}, 400
