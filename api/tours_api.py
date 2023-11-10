@@ -6,6 +6,7 @@ from marshmallow import Schema, fields, ValidationError, validates_schema
 import time
 from datetime import datetime, timedelta
 from db.reserves_db import ReservesCollection
+from db.reviews_db import ReviewsCollection
 from utilities.authentication import token_required
 from utilities.notificator import Notificator
 import pytz
@@ -14,6 +15,7 @@ tours = Blueprint('tours',__name__)
 tours_collection = ToursCollection()
 cities_collection = CitiesCollection()
 reserves_collection = ReservesCollection()
+reviews_collection = ReviewsCollection()
 notificator = Notificator() 
 
 lenguages = ["Español", "Inglés", "Portugués", "Alemán", "Francés", "Italiano"]
@@ -168,10 +170,14 @@ def get_tour(tourId):
     try:
       tour = json.loads(tours_collection.get_tour_by_id(tourId))
       if tour is None:
-         return {"error": "El tour no existe."}, 404
+        return {"error": "El tour no existe."}, 404
+      reviews = json.loads(reviews_collection.get_reviews_for_tour(tour["_id"]["$oid"], state="active"))
+      total_stars = sum(review["stars"] for review in reviews)
+      average_stars = total_stars / len(reviews)
+      tour["averageRating"] = average_stars
       return tour, 200
     except Exception as err:
-       return {"error": str(err)}, 400
+      return {"error": str(err)}, 400
     
 @tours.route("/tours/<tourId>", methods=['PUT'])
 @token_required
