@@ -37,7 +37,9 @@ class ReservesSchema(Schema):
     tour = json.loads(tours_collection.get_tour_by_id(data['tourId'], {'maxParticipants': 1}))
     if tour is None:
       raise ValidationError("El tour seleccionado no existe.")
-    if int(tour['maxParticipants'] * 0.5) < data['people']:
+    reserves = json.loads(reserves_collection.get_reserves_for_traveler_tour(data["traveler"]["email"], data['tourId']))
+    people = sum(reserve["people"] for reserve in reserves)
+    if int(tour['maxParticipants'] * 0.5) < (data['people'] + people):
       raise ValidationError("La cantidad máxima de personas para una reserva es de: " + str(int(tour['maxParticipants'] * 0.5)))
 
 @reserves.route("/reserves", methods=['POST'])
@@ -49,7 +51,6 @@ def post_reserve():
       result = schema.load(reserve)
   except ValidationError as err:
       return jsonify(err.messages), 400
-  # Send data back as JSON
   tour = json.loads(tours_collection.get_tour_by_id(reserve['tourId'], {'maxParticipants': 1, 'dates': 1}))
   new_dates = []
   reserve_created = False
