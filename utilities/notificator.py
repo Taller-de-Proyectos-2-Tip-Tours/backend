@@ -28,23 +28,32 @@ class Notificator:
 
   def notify_cancelled_tour_date(self, userEmail, tourData):
     tokens = self._users.get_device_token_by_email(userEmail)
-    for token in tokens:
-      self._send_notification("Paseo cancelado", 
-                              "Disculpe, la fecha de su paseo ha sido cancelado. Lamentamos cualquier inconveniente causado.", 
-                              token,
-                              tourData)
+    updatedDeviceTokens = []
+    for token in tokens["devicesTokens"]:
+      try:
+        self._send_notification("Paseo cancelado", 
+                                "Disculpe, la fecha de su paseo ha sido cancelado. Lamentamos cualquier inconveniente causado.", 
+                                token,
+                                tourData)
+      except Exception as e:
+        print(e)
+    self._users.update_device_tokens_for_user(tokens["_id"]["$oid"], updatedDeviceTokens)
 
   def notify_modified_tour(self, userEmail, tourData):
     tokens = self._users.get_device_token_by_email(userEmail)
-    for token in tokens:
-      self._send_notification("Paseo modificado", 
-                              "Se ha realizado un cambio en los detalles de su paseo. Le solicitamos revisar la información actualizada.", 
-                              token,
-                              tourData)
-      
+    updatedDeviceTokens = []
+    for token in tokens["devicesTokens"]:
+      try:
+        self._send_notification("Paseo modificado", 
+                                "Se ha realizado un cambio en los detalles de su paseo. Le solicitamos revisar la información actualizada.", 
+                                token,
+                                tourData)
+      except Exception as e:
+        print(e)
+    self._users.update_device_tokens_for_user(tokens["_id"]["$oid"], updatedDeviceTokens)
+
   def notify_reserve_reminder(self, userEmail, tourData):
     tokens = self._users.get_device_token_by_email(userEmail)
-    print(tokens)
     updatedDeviceTokens = []
     for token in tokens["devicesTokens"]:
       try:
