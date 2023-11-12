@@ -10,6 +10,7 @@ from db.reviews_db import ReviewsCollection
 from utilities.authentication import token_required
 from utilities.notificator import Notificator
 import pytz
+import os
 
 tours = Blueprint('tours',__name__)
 tours_collection = ToursCollection()
@@ -152,7 +153,7 @@ def cancel_tour_date():
         "tourId": tourId
       }
       for reserve in reserves:
-        if reserve['date'] == date and reserve["state"] == "abierto":
+        if (reserve['date'] == date) and (reserve["state"] == "abierto") and ( not os.environ["TESTING"] == "True"):
           tour_data["reserveId"] = reserve['_id']['$oid']
           reserves_collection.change_reserve_state(reserve['_id']['$oid'], "cancelado")
           notificator.notify_cancelled_tour_date(reserve["traveler"]["email"], tour_data)
@@ -195,7 +196,7 @@ def update_tour_state(tourId):
         "tourId": tourId
       }
       for reserve in reserves:
-        if reserve["state"] == "abierto":
+        if (reserve["state"] == "abierto") and ( not os.environ["TESTING"] == "True"):
           tour_data["reserveId"] = reserve['_id']['$oid']
           tour_data["date"] = reserve['date']
           tour_data["state"] = reserve['state']
