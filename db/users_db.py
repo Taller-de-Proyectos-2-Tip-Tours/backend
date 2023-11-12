@@ -23,11 +23,14 @@ class UsersCollection:
       self._users = db["users"]
 
   def get_device_token_by_email(self, userEmail):
-    data = self._users.find_one({"userEmail": userEmail}, {"devicesTokens": 1})
+    data = self._users.find_one({"userEmail": userEmail}, {"devicesTokens": 1, "_id": 1})
     user = json.loads(dumps(data))
     if user is None:
       return []
-    return user["devicesTokens"]
+    return user
+  
+  def update_device_tokens_for_user(self, userId, updatedDeviceTokens):
+    self._users.update_one({"_id" : ObjectId(userId)}, {"$set": {"devicesTokens": updatedDeviceTokens}})
   
   def get_user_by_email(self, userEmail):
     data = self._users.find_one({"userEmail": userEmail})

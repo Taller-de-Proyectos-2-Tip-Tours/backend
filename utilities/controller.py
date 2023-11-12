@@ -30,14 +30,19 @@ class Controller:
   def reserve_reminder(self):
     current_time = datetime.now()
     future_time = current_time + timedelta(hours=24)
+    print(future_time)
     future_time_str = future_time.strftime("%Y-%m-%dT%H:%M:%S")
     reserves = json.loads(self._reserves_collection.get_reserves_coming_soon(future_time_str))
+    print(reserves)
     for reserve in reserves:
-      tour_data = {
-        "date": reserve["date"],
-        "state": reserve["state"],
-        "tourId": reserve["tourId"],
-        "reserveId": reserve['_id']['$oid']
-      }
-      self._notificator.notify_reserve_reminder(reserve["traveler"]["email"], tour_data)
-      self._reserves_collection.mark_notified(reserve['_id']['$oid'])
+      try:
+        tour_data = {
+          "date": reserve["date"],
+          "state": reserve["state"],
+          "tourId": reserve["tourId"],
+          "reserveId": reserve['_id']['$oid']
+        }
+        self._notificator.notify_reserve_reminder(reserve["traveler"]["email"], tour_data)
+        self._reserves_collection.mark_notified(reserve['_id']['$oid'])
+      except Exception as e:
+        print(e)
