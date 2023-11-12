@@ -196,10 +196,11 @@ def update_tour_state(tourId):
         "tourId": tourId
       }
       for reserve in reserves:
-        if (reserve["state"] == "abierto") and ( not os.environ["TESTING"] == "True"):
+        if (reserve["state"] == "abierto") and (not (os.environ["TESTING"] == "True")):
           tour_data["reserveId"] = reserve['_id']['$oid']
           tour_data["date"] = reserve['date']
           tour_data["state"] = reserve['state']
+          print("Notifico")
           notificator.notify_modified_tour(reserve["traveler"]["email"], tour_data)
       return {"success": "El tour fue actualizado correctamente"}, 201
     except Exception as err:
