@@ -31,7 +31,6 @@ class Controller:
     argentina_timezone = pytz.timezone('America/Argentina/Buenos_Aires')
     current_time = datetime.now(argentina_timezone)
     future_time = current_time + timedelta(hours=24)
-    print(future_time)
     future_time_str = future_time.strftime("%Y-%m-%dT%H:%M:%S")
     reserves = json.loads(self._reserves_collection.get_reserves_coming_soon(future_time_str))
     print(reserves)
