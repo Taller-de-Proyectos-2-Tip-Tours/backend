@@ -16,6 +16,7 @@ from api.reviews_api import reviews
 from utilities.controller import Controller
 from api.admins_api import admins
 from api.users_api import users
+from api.dashboards_api import dashboards
 
 app = Flask(__name__)
 app.register_blueprint(tours)
@@ -24,6 +25,7 @@ app.register_blueprint(reserves)
 app.register_blueprint(reviews)
 app.register_blueprint(admins)
 app.register_blueprint(users)
+app.register_blueprint(dashboards)
 
 CORS(app)
 

@@ -53,3 +53,8 @@ class ReservesCollection:
 
   def mark_notified(self, reserveId):
     self._reserves.update_one({"_id" : ObjectId(reserveId)}, {"$set": {"notified": 1}})
+
+  def get_active_users_by_date(self, date):
+    data = self._reserves.find({"date": {"$lte": date}, "state": "finalizado"}, {"traveler": 1})
+    unique_emails = set(reserve["traveler"]["email"] for reserve in data)
+    return len(unique_emails)
