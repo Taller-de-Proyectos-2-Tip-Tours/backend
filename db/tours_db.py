@@ -141,3 +141,7 @@ class ToursCollection:
     )
     return dumps(data)
     
+  def get_active_users_by_date(self, date):
+    data = self._tours.find({"dates.state": "finalizado", "dates.date": {"$lte": date}}, {"guide": 1})
+    unique_emails = set(tour["guide"]["email"] for tour in data)
+    return len(unique_emails)
