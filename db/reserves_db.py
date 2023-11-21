@@ -58,3 +58,7 @@ class ReservesCollection:
     data = self._reserves.find({"date": {"$lte": date}, "state": "finalizado"}, {"traveler": 1})
     unique_emails = set(reserve["traveler"]["email"] for reserve in data)
     return len(unique_emails)
+  
+  def get_reserves_between_dates(self, startDate, endDate):
+    data = self._reserves.find({"date": {"$lte": endDate, "$gte": startDate}}, {"tourId": 1})
+    return dumps(data)
