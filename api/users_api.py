@@ -1,6 +1,7 @@
 from flask import request, Blueprint
-import json
 from db.users_db import UsersCollection
+from utilities.authentication import app_token
+import os
 
 users = Blueprint('users',__name__)
 users_collection = UsersCollection()
@@ -16,6 +17,7 @@ def register_user(userEmail, token):
     return {"success": "Usuario registrado correctamente"}, 200
 
 @users.route("/users/login", methods=['POST'])
+@app_token(expected_tokens=[os.getenv("mobileAppToken")])
 def login_user():
     user = request.json
     if not (user["userEmail"] and user["deviceToken"]):

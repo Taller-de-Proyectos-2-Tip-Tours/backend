@@ -2,6 +2,7 @@ import datetime
 from flask import request, Blueprint
 import json
 from db.admins_db import AdminsCollection
+from utilities.authentication import app_token
 import jwt
 import os
 
@@ -21,6 +22,7 @@ def generate_token(username):
   )
 
 @admins.route("/admins/login", methods=['POST'])
+@app_token(expected_tokens=[os.getenv("backofficeToken")])
 def admins_login():
   credentials = request.json
   admin = json.loads(admins_collection.get_admin(credentials.get("username"), credentials.get("password")))
