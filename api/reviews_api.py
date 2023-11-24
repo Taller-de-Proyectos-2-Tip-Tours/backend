@@ -6,8 +6,8 @@ from db.tours_db import ToursCollection
 from bson.objectid import ObjectId
 from datetime import datetime
 import pytz
-
-from utilities.authentication import token_required
+from utilities.authentication import token_required, app_token
+import os
 
 reviews = Blueprint('reviews',__name__)
 reviews_collection = ReviewsCollection()
@@ -44,11 +44,13 @@ class ReviewSchema(Schema):
 
 @reviews.route("/reviews/<tourId>", methods=['GET'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken"), os.getenv("mobileAppToken")])
 def get_reviews(tourId):
     return json.loads(reviews_collection.get_reviews_for_tour(tourId, request.args.get('state'))), 200
 
 @reviews.route("/reviews/<tourId>", methods=['POST'])
 @token_required
+@app_token(expected_tokens=[os.getenv("mobileAppToken")])
 def post_review(tourId):
     review = request.json
     schema = ReviewSchema()
@@ -66,6 +68,7 @@ def post_review(tourId):
     return {"success": "La review fue creada con éxito."}, 201
 
 @reviews.route("/reviews/<reviewId>", methods=['DELETE'])
+@app_token(expected_tokens=[os.getenv("backofficeToken")]) #VERIFICAR
 @token_required
 def delete_review(reviewId):
     try:

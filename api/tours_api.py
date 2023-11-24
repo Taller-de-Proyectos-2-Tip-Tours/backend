@@ -7,7 +7,7 @@ import time
 from datetime import datetime, timedelta
 from db.reserves_db import ReservesCollection
 from db.reviews_db import ReviewsCollection
-from utilities.authentication import token_required
+from utilities.authentication import token_required, app_token
 from utilities.notificator import Notificator
 import pytz
 import os
@@ -101,6 +101,7 @@ class ToursSchema(Schema):
 
 @tours.route("/tours", methods=['GET'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken"), os.getenv("mobileAppToken")])
 def get_tours():
     return json.loads(tours_collection.get_all_tours(request.args.get('name'), 
                                                      request.args.get('city'),
@@ -110,6 +111,7 @@ def get_tours():
 
 @tours.route("/tours", methods=['POST'])
 @token_required
+@app_token(expected_tokens=[os.getenv("webAppToken")])
 def post_tours():
     tour = request.json
     schema = ToursSchema()
@@ -129,6 +131,7 @@ def post_tours():
 
 @tours.route("/tours/cancel", methods=['PUT'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken")])
 def cancel_tour_date():
     tourId = request.args.get('tourId')
     date = request.args.get('date')
@@ -167,6 +170,7 @@ def cancel_tour_date():
 
 @tours.route("/tours/<tourId>", methods=['GET'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken"), os.getenv("mobileAppToken")])
 def get_tour(tourId):
     try:
       tour = json.loads(tours_collection.get_tour_by_id(tourId))
@@ -185,6 +189,7 @@ def get_tour(tourId):
     
 @tours.route("/tours/<tourId>", methods=['PUT'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken")])
 def update_tour_state(tourId):
     updated_tour = request.json
     if not (updated_tour.get("_id") is None):

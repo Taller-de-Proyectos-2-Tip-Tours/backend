@@ -1,10 +1,11 @@
 from db.reserves_db import ReservesCollection
-from utilities.authentication import token_required
+from utilities.authentication import token_required, app_token
 from flask import request, Blueprint
 from datetime import datetime, timedelta
 from db.tours_db import ToursCollection
 from collections import Counter
 import json
+import os
 
 dashboards = Blueprint('dashboards',__name__)
 reserves_collection = ReservesCollection()
@@ -42,6 +43,7 @@ def get_guides_evolution(start_date, end_date):
 
 @dashboards.route("/dashboards/evolution", methods=['GET'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken")])
 def get_evolution():
   response = {
     "travelers": get_travelers_evolution(request.args.get('start_date'),
@@ -53,6 +55,7 @@ def get_evolution():
 
 @dashboards.route("/dashboards/tourstopten", methods=['GET'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken")])
 def get_tours_top_ten():
   request.args.get('start_date')
   request.args.get('end_date')
@@ -72,3 +75,4 @@ def get_tours_top_ten():
   print(tour_id_counts)
   result_json = [{"tour": tour_id, "reserves": count} for tour_id, count in tour_id_counts.items()]
   return result_json, 200
+
