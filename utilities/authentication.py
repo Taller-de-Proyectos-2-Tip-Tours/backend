@@ -36,3 +36,21 @@ def token_required(f):
       return jsonify({'error': 'Token inválido'}), 401
     return f(*args, **kwargs)
   return decorated
+
+def app_token(expected_tokens):
+  def decorator(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+      if os.environ["TESTING"] == "True":
+        return f(*args, **kwargs)
+      if 'Authorization' in request.headers:
+        auth_header = request.headers['Authorization']
+        token_type, token = auth_header.split(' ', 1)
+        if (token_type.lower() == 'bearer') and (token in expected_tokens):
+          return f(*args, **kwargs)
+        else:
+          return jsonify({'error': 'Token inválido'}), 401
+      else:
+        return jsonify({'error': 'Token inválido'}), 401
+    return decorated
+  return decorator

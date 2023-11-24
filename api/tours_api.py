@@ -7,7 +7,7 @@ import time
 from datetime import datetime, timedelta
 from db.reserves_db import ReservesCollection
 from db.reviews_db import ReviewsCollection
-from utilities.authentication import token_required
+from utilities.authentication import token_required, app_token
 from utilities.notificator import Notificator
 import pytz
 import os
@@ -101,6 +101,7 @@ class ToursSchema(Schema):
 
 @tours.route("/tours", methods=['GET'])
 @token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken"), os.getenv("mobileAppToken")])
 def get_tours():
     return json.loads(tours_collection.get_all_tours(request.args.get('name'), 
                                                      request.args.get('city'),
