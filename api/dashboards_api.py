@@ -84,6 +84,7 @@ def get_tours_top_ten():
   tour_id_counts = Counter(tour_ids)
   sorted_tour_id_counts = dict(sorted(tour_id_counts.items(), key=lambda x: x[1], reverse=True))
   top_10_tour_id_counts = {tour_id: count for tour_id, count in list(sorted_tour_id_counts.items())[:10]}
+  print(top_10_tour_id_counts)
   response = []
   for tour_id, count in top_10_tour_id_counts.items():
     tour = json.loads(tours_collection.get_tour_by_id(tour_id, {'name': 1}))
@@ -91,9 +92,7 @@ def get_tours_top_ten():
       "tour": tour['name'],
       "reserves": count
     })
-  print(tour_id_counts)
-  result_json = [{"tour": tour_id, "reserves": count} for tour_id, count in tour_id_counts.items()]
-  return result_json, 200
+  return response, 200
 
 @dashboards.route("/dashboards/besttours", methods=['GET'])
 @token_required
