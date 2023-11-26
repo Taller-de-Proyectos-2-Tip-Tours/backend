@@ -21,6 +21,10 @@ class ReviewsCollection:
         db = client.myDatabase
       self._reviews = db["reviews"]
 
+  def get_all_reviews(self):
+    data = list(self._reviews.find())
+    return dumps(data)
+  
   def get_reviews_for_tour(self, tourId, state = None):
     if state:
       data = list(self._reviews.find({"tourId": tourId, "state": state}))
