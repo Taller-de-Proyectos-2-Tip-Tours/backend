@@ -55,8 +55,8 @@ def bayesian_rating(n, confidence=0.95):
     first_part = 0.0
     second_part = 0.0
     for k, n_k in enumerate(n):
-        first_part += (k+1)*(n[k]+1)/(N+K)
-        second_part += (k+1)*(k+1)*(n[k]+1)/(N+K)
+      first_part += (k+1)*(n[k]+1)/(N+K)
+      second_part += (k+1)*(k+1)*(n[k]+1)/(N+K)
     score = first_part - z * math.sqrt((second_part - first_part*first_part)/(N+K+1))
     return score
 

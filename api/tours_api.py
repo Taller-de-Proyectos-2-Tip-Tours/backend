@@ -103,11 +103,14 @@ class ToursSchema(Schema):
 @token_required
 @app_token(expected_tokens=[os.getenv("backofficeToken"), os.getenv("webAppToken"), os.getenv("mobileAppToken")])
 def get_tours():
-    return json.loads(tours_collection.get_all_tours(request.args.get('name'), 
+    tours = json.loads(tours_collection.get_all_tours(request.args.get('name'), 
                                                      request.args.get('city'),
                                                      request.args.get('guideEmail'),
                                                      request.args.get('state'),
-                                                     request.args.get('dateState'))), 200
+                                                     request.args.get('dateState')))
+    for tour in tours:
+      tour["dates"] = sorted(tour["dates"], key=lambda x: x["date"])
+    return tours, 200
 
 @tours.route("/tours", methods=['POST'])
 @token_required
@@ -176,6 +179,7 @@ def get_tour(tourId):
       tour = json.loads(tours_collection.get_tour_by_id(tourId))
       if tour is None:
         return {"error": "El tour no existe."}, 404
+      tour["dates"] = sorted(tour["dates"], key=lambda x: x["date"])
       reviews = json.loads(reviews_collection.get_reviews_for_tour(tour["_id"]["$oid"], state="active"))
       if len(reviews) > 0:
         total_stars = sum(review["stars"] for review in reviews)
