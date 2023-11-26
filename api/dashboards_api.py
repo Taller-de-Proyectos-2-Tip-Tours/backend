@@ -3,13 +3,18 @@ from utilities.authentication import token_required, app_token
 from flask import request, Blueprint
 from datetime import datetime, timedelta
 from db.tours_db import ToursCollection
+from db.reviews_db import ReviewsCollection
 from collections import Counter
 import json
 import os
+import scipy.stats as st
+from collections import defaultdict
+import math
 
 dashboards = Blueprint('dashboards',__name__)
 reserves_collection = ReservesCollection()
 tours_collection = ToursCollection()
+reviews_collection = ReviewsCollection()
 
 def get_travelers_evolution(start_date, end_date):
   start_date = datetime.strptime(start_date, "%Y-%m-%d")
@@ -40,6 +45,20 @@ def get_guides_evolution(start_date, end_date):
     guides.append(body)
     current_date += timedelta(days=1)
   return guides
+
+def bayesian_rating(n, confidence=0.95):
+    if sum(n)==0:
+        return 0
+    K = len(n)
+    z = st.norm.ppf(1 - (1 - confidence) / 2)
+    N = sum(n)
+    first_part = 0.0
+    second_part = 0.0
+    for k, n_k in enumerate(n):
+        first_part += (k+1)*(n[k]+1)/(N+K)
+        second_part += (k+1)*(k+1)*(n[k]+1)/(N+K)
+    score = first_part - z * math.sqrt((second_part - first_part*first_part)/(N+K+1))
+    return score
 
 @dashboards.route("/dashboards/evolution", methods=['GET'])
 @token_required
@@ -75,4 +94,28 @@ def get_tours_top_ten():
   print(tour_id_counts)
   result_json = [{"tour": tour_id, "reserves": count} for tour_id, count in tour_id_counts.items()]
   return result_json, 200
+
+@dashboards.route("/dashboards/besttours", methods=['GET'])
+@token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken")])
+def get_best_rated_tours():
+  reviews = json.loads(reviews_collection.get_all_reviews())
+  tour_reviews = defaultdict(list)
+  for review in reviews:
+    tour_reviews[review['tourId']].append(review['stars'])
+  print(tour_reviews)
+  tours = []
+  for id, scores in tour_reviews.items():
+    bayesian_avg = bayesian_rating(scores)
+    tours.append({"id": id, "score": bayesian_avg})
+  sorted_scores = sorted(tours, key=lambda x: x['score'], reverse=True)
+  top_10_scores = sorted_scores[:10]
+  response = []
+  for scores in top_10_scores:
+    tour = json.loads(tours_collection.get_tour_by_id(scores['id'], {'name': 1}))
+    response.append({
+      "tour": tour['name'],
+      "score": scores["score"]
+    })
+  return response, 200
 

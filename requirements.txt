@@ -11,3 +11,4 @@ APScheduler>=3.10.4
 firebase-admin>=6.2.0
 PyJWT>=2.8.0
 python-dotenv>=1.0.0 
+scipy>=1.10.1
