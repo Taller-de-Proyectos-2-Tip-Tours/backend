@@ -119,3 +119,20 @@ def get_best_rated_tours():
     })
   return response, 200
 
+@dashboards.route("/dashboards/bannedratings", methods=['GET'])
+@token_required
+@app_token(expected_tokens=[os.getenv("backofficeToken")])
+def get_banned_ratings():
+  reviews = json.loads(reviews_collection.get_all_reviews())
+  active_count = 0
+  inactive_count = 0
+  for review in reviews:
+    if review["state"] == "active":
+        active_count += 1
+    elif review["state"] == "inactive":
+        inactive_count += 1
+  response = {
+     "active": active_count,
+     "inactive": inactive_count
+  }
+  return response, 200
